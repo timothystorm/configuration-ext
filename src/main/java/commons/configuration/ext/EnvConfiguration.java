@@ -420,6 +420,7 @@ public class EnvConfiguration extends PropertiesConfiguration {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.ENCODING, getEncoding() != null ? getEncoding() : ENCODING);
 
             DOMSource source = new DOMSource(doc);
