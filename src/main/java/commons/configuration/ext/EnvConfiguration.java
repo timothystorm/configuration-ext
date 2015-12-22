@@ -2,7 +2,6 @@ package commons.configuration.ext;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
@@ -16,9 +15,16 @@ import java.util.Properties;
 import java.util.Stack;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -27,6 +33,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -182,7 +190,9 @@ public class EnvConfiguration extends PropertiesConfiguration {
     /**
      * Elements of the env-configuration
      */
-    private static class Element {
+    private static class Elem {
+        static final String CONFIGURATION = "configuration";
+        static final String CONTEXT       = "context";
         static final String HOST          = "host";
         static final String HOSTS         = "hosts";
         static final String PROPERTY      = "property";
@@ -193,7 +203,7 @@ public class EnvConfiguration extends PropertiesConfiguration {
      * XML parse handler for env-config.xml resources [finite state machine]
      */
     private class FedExConfigurationHandler extends DefaultHandler {
-        Config_1_0_0        _config;
+        Config_1_0_0  _config;
         Stack<String> _state;
         StringBuilder _str;
 
@@ -212,8 +222,8 @@ public class EnvConfiguration extends PropertiesConfiguration {
         @Override
         public void endElement(String uri, String name, String qName) throws SAXException {
             String element = _state.peek();
-            if (Element.HOST.equals(element)) _config.addHost(_str.toString());
-            if (Element.VALUE.equals(element)) _config.addProperty(_str.toString());
+            if (Elem.HOST.equals(element)) _config.addHost(_str.toString());
+            if (Elem.VALUE.equals(element)) _config.addProperty(_str.toString());
 
             // setup for the nexte element
             _state.pop();
@@ -232,9 +242,9 @@ public class EnvConfiguration extends PropertiesConfiguration {
             _state.push(StringUtils.lowerCase(name));
 
             String element = _state.peek();
-            if (Element.HOSTS.equals(element)) _config.setHostEnv(attr.getValue(StringUtils.EMPTY, Attr.ENV));
-            if (Element.PROPERTY.equals(element)) _config.setPropertyKey(attr.getValue(StringUtils.EMPTY, Attr.KEY));
-            if (Element.VALUE.equals(element)) _config.setPropertyEnv(attr.getValue(StringUtils.EMPTY, Attr.ENV));
+            if (Elem.HOSTS.equals(element)) _config.setHostEnv(attr.getValue(StringUtils.EMPTY, Attr.ENV));
+            if (Elem.PROPERTY.equals(element)) _config.setPropertyKey(attr.getValue(StringUtils.EMPTY, Attr.KEY));
+            if (Elem.VALUE.equals(element)) _config.setPropertyEnv(attr.getValue(StringUtils.EMPTY, Attr.ENV));
         }
     }
 
@@ -242,7 +252,7 @@ public class EnvConfiguration extends PropertiesConfiguration {
      * schema filename used for schema validation
      */
     private static String _configurationSchema = "configuration-1.0.0.xsd";
-    static final String ENCODING  = "UTF-8";
+    static final String   ENCODING             = "UTF-8";
 
     static final String NAMESPACE = "http://commons.apache.org/schema/configuration";
 
@@ -338,66 +348,85 @@ public class EnvConfiguration extends PropertiesConfiguration {
      * 
      * <pre>
      * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
-     * &lt;conf:configuration xmlns:conf="http://commons.apache.org/schema/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://commons.apache.org/schema/configuration configuration-1.0.0.xsd"&gt;
-     *   &lt;conf:context&gt;
-     *       &lt;conf:hosts env="0"&gt;
-     *         &lt;conf:host&gt;CFSIT111111.corp.ds.env.com&lt;/conf:host&gt;
-     *       &lt;/conf:hosts&gt;
-     *   &lt;/conf:context&gt;
+     * &lt;configuration xmlns:conf="http://commons.apache.org/schema/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://commons.apache.org/schema/configuration configuration-1.0.0.xsd"&gt;
+     *   &lt;context&gt;
+     *       &lt;hosts env="0"&gt;
+     *         &lt;host&gt;CFSIT111111.corp.ds.env.com&lt;/host&gt;
+     *       &lt;/hosts&gt;
+     *   &lt;/context&gt;
      *   
-     *   &lt;conf:property key="key1"&gt;
-     *       &lt;conf:value env="0"&gt;value1&lt;/conf:value&gt;
-     *   &lt;/conf:property&gt;
+     *   &lt;property key="key1"&gt;
+     *       &lt;value env="0"&gt;value1&lt;/value&gt;
+     *   &lt;/property&gt;
      *   
-     *   &lt;conf:property key="key2"&gt;
-     *       &lt;conf:value env="0"&gt;value2&lt;/conf:value&gt;
-     *   &lt;/conf:property&gt;
-     *&lt;/conf:configuration&gt;
+     *   &lt;property key="key2"&gt;
+     *       &lt;value env="0"&gt;value2&lt;/value&gt;
+     *   &lt;/property&gt;
+     *&lt;/configuration&gt;
      * </pre>
      */
     @Override
     public void save(Writer out) throws ConfigurationException {
-        PrintWriter writer = new PrintWriter(out);
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            doc.setXmlVersion("1.0");
 
-        String encoding = getEncoding() != null ? getEncoding() : ENCODING;
-        writer.println("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>");
-        writer.println("<conf:configuration xmlns:conf=\"http://commons.apache.org/schema/configuration\" ");
-        writer.println("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-        writer.println(
-                "xsi:schemaLocation=\"http://commons.apache.org/schema/configuration -configuration-1.0.0.xsd\" >");
+            // configuration
+            Element configuration = doc.createElementNS(NAMESPACE, Elem.CONFIGURATION);
+            configuration.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xs:schemaLocation",
+                    String.join(" ", NAMESPACE, _configurationSchema));
+            doc.appendChild(configuration);
 
-        writer.println("<conf:context>");
-        {
-            writer.println("<conf:hosts env=\"0\">");
-            {
-                writer.println("<conf:host>localhost</conf:host>");
-                writer.println("<conf:host>");
-                writer.println(MachineUtils.hostName());
-                writer.println("</conf:host>");
+            // context
+            Element context = doc.createElement(Elem.CONTEXT);
+            configuration.appendChild(context);
+
+            // hosts
+            Element hosts = doc.createElement(Elem.HOSTS);
+            hosts.setAttribute("env", "0");
+            context.appendChild(hosts);
+
+            // host
+            Element host = doc.createElement(Elem.HOST);
+            host.setTextContent("localhost");
+            hosts.appendChild(host);
+
+            // property/values
+            for (Iterator<String> keys = getKeys(); keys.hasNext();) {
+                String key = keys.next();
+                Object value = getProperty(key);
+
+                if (value != null) {
+                    // prepare the value
+                    String v = StringEscapeUtils.escapeXml(String.valueOf(value));
+                    v = StringUtils.replace(v, String.valueOf(getListDelimiter()), "\\" + getListDelimiter());
+
+                    // property
+                    Element property = doc.createElement("property");
+                    property.setAttribute("key", StringEscapeUtils.escapeXml(key));
+                    configuration.appendChild(property);
+
+                    // value
+                    Element val = doc.createElement("value");
+                    val.setAttribute("env", "0");
+                    val.setTextContent(v);
+                    property.appendChild(val);
+                }
             }
-            writer.println("</conf:hosts>");
+
+            // output the results
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, getEncoding() != null ? getEncoding() : ENCODING);
+
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(out);
+            transformer.transform(source, result);
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
         }
-
-        writer.println("</conf:context>");
-
-        for (Iterator<String> keys = getKeys(); keys.hasNext();) {
-            String key = keys.next();
-            Object value = getProperty(key);
-
-            // escape the key
-            String k = StringEscapeUtils.escapeXml(key);
-            if (value != null) {
-                // escape the value
-                String v = StringEscapeUtils.escapeXml(String.valueOf(value));
-                v = StringUtils.replace(v, String.valueOf(getListDelimiter()), "\\" + getListDelimiter());
-                writer.println("<conf:property key=\"" + k + "\">");
-                writer.println("<conf:value env=\"0\">" + v + "</conf:value>");
-                writer.println("</conf:property>");
-            }
-
-        }
-
-        writer.println("</conf:configuration>");
-        writer.flush();
     }
 }
