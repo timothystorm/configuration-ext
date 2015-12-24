@@ -28,6 +28,6 @@ public class ClassPathUtilsTest {
     public void readResource() throws Exception{
         try(Reader reader = ClassPathUtils.readResource("version.properties")){
             assertNotNull(reader);
-        };
+        }
     }
 }

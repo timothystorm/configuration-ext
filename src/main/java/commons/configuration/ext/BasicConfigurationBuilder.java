@@ -10,6 +10,7 @@ import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationBuilder;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
 
 /**
  * <p>
@@ -198,5 +199,9 @@ public class BasicConfigurationBuilder implements ConfigurationBuilder {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public BasicConfigurationBuilder useSystemProperties(){
+        return setConfigurations(new SystemConfiguration());
     }
 }

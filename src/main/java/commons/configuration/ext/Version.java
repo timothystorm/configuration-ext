@@ -7,8 +7,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * Version properties calculated from Maven build resources.
  * 
@@ -17,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
 public class Version {
 
     private static final String LF = System.getProperty("line.separator");
-
+    
     /** cache application properties so they are not reloaded every time they are accessed */
     private static volatile Properties _propsCache;
 
@@ -179,7 +177,7 @@ public class Version {
                 if (_svuidCache == null) {
                     try {
                         String version = Version.majorVersion() + Version.minorVersion();
-                        if (StringUtils.isEmpty(version)) _svuidCache = defaultSvuid;
+                        if (version == null || version.length() <= 0) _svuidCache = defaultSvuid;
                         else _svuidCache = new BigInteger(version.getBytes(StandardCharsets.UTF_8)).longValue();
                     } catch (Exception e) {
                         _svuidCache = defaultSvuid;
@@ -205,7 +203,7 @@ public class Version {
         if (matcher.find() && matcher.groupCount() >= p) return matcher.group(p);
 
         // something wonky
-        return StringUtils.EMPTY;
+        return "";
     }
 
     /**

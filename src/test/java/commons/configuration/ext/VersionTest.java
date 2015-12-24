@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.junit.Test;
-
-import commons.configuration.ext.Version;
 
 public class VersionTest {
     static final String APP_NAME = "configuration-ext";
@@ -18,7 +14,7 @@ public class VersionTest {
         String bv = Version.buildVersion();
 
         // build version is optional so only check provided in pom.xml
-        if (StringUtils.isNotBlank(bv)) assertTrue(StringUtils.isAlpha(bv));
+        if (bv != null && bv.length() > 0) assertTrue(bv.matches("[a-zA-Z]+"));
     }
 
     @Test
@@ -33,17 +29,17 @@ public class VersionTest {
 
     @Test
     public void maintenanceVersion() throws Exception {
-        assertTrue(NumberUtils.isDigits(Version.maintenanceVersion()));
+        assertTrue(Version.maintenanceVersion().matches("[0-9]+"));
     }
 
     @Test
     public void majorVersion() throws Exception {
-        assertTrue(NumberUtils.isDigits(Version.majorVersion()));
+        assertTrue(Version.majorVersion().matches("[0-9]+"));
     }
 
     @Test
     public void minorVersion() throws Exception {
-        assertTrue(NumberUtils.isDigits(Version.minorVersion()));
+        assertTrue(Version.minorVersion().matches("[0-9]+"));
     }
 
     @Test
