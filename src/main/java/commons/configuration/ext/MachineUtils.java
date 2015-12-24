@@ -18,22 +18,6 @@ class MachineUtils {
      */
     private static volatile InetAddress LOCAL_HOST;
 
-    private static final long MB = 1024 * 1024;
-
-    /**
-     * @return total amount of memory being used by the JVM
-     */
-    public static long committedMemory() {
-        return totalMemory() - freeMemory();
-    }
-
-    /**
-     * @return amount of free memory in the JVM in MB
-     */
-    public static long freeMemory() {
-        return Runtime.getRuntime().freeMemory() / MB;
-    }
-
     /**
      * @return this machines IP address string in textual presentation
      */
@@ -135,27 +119,5 @@ class MachineUtils {
         } catch (SocketException e) {
             return null;
         }
-    }
-
-    /**
-     * @return this machines identity which is the merge of the DNS name and IP
-     *         ex. my.machine.id:10.4.3.121
-     */
-    public static String machineId() {
-        return String.format("%s:%s", hostName(), hostAddress());
-    }
-
-    /**
-     * @return maximum amount of memory that the JVM will attempt to use in MB
-     */
-    public static long maxMemory() {
-        return Runtime.getRuntime().maxMemory() / MB;
-    }
-
-    /**
-     * @return total amount of memory in the JVM in MB
-     */
-    public static long totalMemory() {
-        return Runtime.getRuntime().totalMemory() / MB;
     }
 }

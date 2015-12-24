@@ -17,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
  * The main reason for these utility methods for resource location handling
  * is to support {@link Log4jConfigurer}, which must be able to resolve
  * resource locations <i>before the logging system has been initialized</i>.
+ * 
+ * @TOD Glean only what is being used by module
  */
 class ResourceUtils {
 

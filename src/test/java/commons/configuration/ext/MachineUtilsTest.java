@@ -12,7 +12,6 @@ public class MachineUtilsTest {
      */
     @Test
     public void presence() throws Exception {
-        assertNotNull(MachineUtils.macAddress());
         assertNotNull(MachineUtils.hostAddress());
         assertNotNull(MachineUtils.hostName());
         assertNotNull(MachineUtils.localHost());
