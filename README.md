@@ -13,7 +13,7 @@ In many large scale environments there are several different levels of testing
 and production.  At each of these test levels there needs to be a unique set
 of configurations.  EnvConfiguration is an additional configuration that makes
 leveled configuration possible.  You use it like any other commons-configuration
-component.  The only difference is the resource file, which structured xml data.
+component.  The only difference is the resource file, which is structured xml data.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -23,8 +23,8 @@ component.  The only difference is the resource file, which structured xml data.
   xsi:schemaLocation="http://commons.apache.org/schema/configuration configuration-1.0.0.xsd ">
   <conf:context>
     <conf:hosts env="DEV">
-      <conf:host>fully.qualified.domain.name</conf:host>
-      <conf:host>10.10.10.100</conf:host>
+      <conf:host>localhost</conf:host>
+      <conf:host>127.0.0.1</conf:host>
     <conf:hosts>
     <conf:hosts env="QA">
       <conf:host>fully.qualified.domain.name</conf:host>
