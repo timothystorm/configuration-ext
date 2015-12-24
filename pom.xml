@@ -8,6 +8,10 @@
 	<description>
 		Extension utilities to be used with commons-configuration
 	</description>
+	
+	<scm>
+		<url>https://github.com/timothystorm/configuration-ext.git</url>
+	</scm>
 
 	<developers>
 		<developer>
