@@ -11,6 +11,13 @@
 
 	<developers>
 		<developer>
+			<name>Darren Bruxvoort</name>
+			<roles>
+				<role>Architect</role>
+			</roles>
+			<timezone>MST7MDT</timezone>
+		</developer>
+		<developer>
 			<name>Timothy Storm</name>
 			<email>timothystorm@gmail.com</email>
 			<roles>
