@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://commons.apache.org/schema/configuration"
-	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:conf="http://commons.apache.org/schema/configuration">
+<xsd:schema targetNamespace="http://commons.apache.org/schema/env-configuration-1.0.0"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:conf="http://commons.apache.org/schema/env-configuration-1.0.0">
 
 	<xsd:annotation>
 		<xsd:appinfo>FedEx Configuration</xsd:appinfo>

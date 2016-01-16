@@ -20,7 +20,7 @@ component.  The only difference is the resource file, which is structured xml da
 <conf:configuration 
   xmlns:conf="http://commons.apache.org/schema/configuration" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://commons.apache.org/schema/configuration configuration-1.0.0.xsd ">
+  xsi:schemaLocation="http://commons.apache.org/schema/configuration configuration-1.0.0.xsd">
   <conf:context>
     <conf:hosts env="DEV">
       <conf:host>localhost</conf:host>

@@ -154,7 +154,7 @@ public class BasicConfigurationBuilder implements ConfigurationBuilder {
     }
 
     /**
-     * utility method for adding a {@link EnvConfiguration} using resource resolution similar to spring.
+     * utility method for adding a {@link XmlConfiguration} using resource resolution similar to spring.
      * 
      * <pre>
      * builder.setPropertiesConfiguration("envconfig.xml");
@@ -171,7 +171,7 @@ public class BasicConfigurationBuilder implements ConfigurationBuilder {
     public BasicConfigurationBuilder setEnvConfiguration(String envLocation) {
         try {
             File envFile = ResourceUtils.getFile(envLocation);
-            return setConfigurations(new EnvConfiguration(envFile));
+            return setConfigurations(new XmlConfiguration(envFile));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

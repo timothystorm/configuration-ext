@@ -33,7 +33,7 @@ public class BasicConfigurationBuilderTest {
 
     Configuration mockEnvConfig() {
         try {
-            EnvConfiguration config = new EnvConfiguration();
+            XmlConfiguration config = new XmlConfiguration();
             config.addProperty("env_key", "100");
             return config;
         } catch (Exception e) {
