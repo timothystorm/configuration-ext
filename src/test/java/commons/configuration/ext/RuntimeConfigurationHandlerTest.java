@@ -14,16 +14,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class ConfigHandler_1_0_0_Test {
+public class RuntimeConfigurationHandlerTest {
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
     
-    ConfigHandler_1_0_0 _configHandler;
+    RuntimeConfigurationHandler _handler;
     Configuration _config;
     
     @Before
     public void setUp() throws Exception{
-        _configHandler = new ConfigHandler_1_0_0((_config = createMock(Configuration.class)));
+        _handler = new RuntimeConfigurationHandler((_config = createMock(Configuration.class)));
     }
     
     @Test
@@ -33,7 +33,7 @@ public class ConfigHandler_1_0_0_Test {
         
         File tmp = tmpFolder.newFile();
         Files.write(tmp.toPath(), omegaXml().getBytes());
-        _configHandler.readFrom(new FileReader(tmp));
+        _handler.parse(new FileReader(tmp));
         
         verify(_config);
     }

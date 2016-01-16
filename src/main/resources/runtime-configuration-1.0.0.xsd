@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema targetNamespace="http://commons.apache.org/schema/env-configuration-1.0.0"
-	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:conf="http://commons.apache.org/schema/env-configuration-1.0.0">
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:conf="http://commons.apache.org/schema/env-configuration-1.0.0">
 
 	<xsd:annotation>
 		<xsd:appinfo>FedEx Configuration</xsd:appinfo>
 		<xsd:documentation xml:lang="en">
-			Schema for the following XML...
+			XML example...
         
         <![CDATA[
         <configuration>
@@ -25,8 +26,8 @@
 
 	<xsd:complexType name="Configuration">
 		<xsd:sequence>
-			<xsd:element name="context" type="conf:Context" minOccurs="1"
-				maxOccurs="1" />
+			<xsd:element name="context" type="conf:Context"
+				minOccurs="1" maxOccurs="1" />
 			<xsd:element name="property" type="conf:Property"
 				minOccurs="0" maxOccurs="unbounded" />
 		</xsd:sequence>

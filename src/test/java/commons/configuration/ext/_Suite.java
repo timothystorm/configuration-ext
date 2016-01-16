@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ BasicConfigurationBuilderTest.class, ClassPathUtilsTest.class, ConfigHandler_1_0_0_Test.class,
+@SuiteClasses({ BasicConfigurationBuilderTest.class, ClassPathUtilsTest.class, RuntimeConfigurationHandlerTest.class,
         LocalHostMatcherTest.class, MachineHostMatcherTest.class, MachineUtilsTest.class, VersionTest.class,
-        XmlConfigurationTest.class, })
+        RuntimeConfigurationTest.class, })
 public class _Suite {}

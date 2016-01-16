@@ -1,6 +1,11 @@
 package commons.configuration.ext;
 
-class LocalHostMatcher implements HostMatcher {
+/**
+ * Matches hosts if they are assigned the localhost identity or alias: localhost, 127.0.0.1, ::1.
+ * 
+ * @author Timothy Storm
+ */
+public class LocalHostMatcher implements HostMatcher {
 
     private static volatile HostMatcher SINGLETON;
 

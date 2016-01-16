@@ -19,20 +19,28 @@ import org.junit.rules.TemporaryFolder;
 /**
  * Test behavior of {@link FedExConfiguration}
  */
-public class XmlConfigurationTest {
+public class RuntimeConfigurationTest {
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
 
-    ConfigHandler    _configHandler;
-    XmlConfiguration _config;
+    ConfigurationParser    _parser;
+    ConfigurationComposer  _composer;
+    StrategicConfiguration _config;
 
     @Before
     public void setUp() throws Exception {
-        _configHandler = createMock(ConfigHandler.class);
-        _config = new XmlConfiguration() {
+        _parser = createMock(ConfigurationParser.class);
+        _composer = createMock(ConfigurationComposer.class);
+
+        _config = new RuntimeConfiguration() {
             @Override
-            protected ConfigHandler getConfiugrationHandler() {
-                return _configHandler;
+            protected ConfigurationParser getConfigurationParser() {
+                return _parser;
+            }
+
+            @Override
+            protected ConfigurationComposer getConfigurationComposer() {
+                return _composer;
             }
         };
     }
@@ -43,8 +51,8 @@ public class XmlConfigurationTest {
     @Test
     public void load() throws Exception {
         // setup expectations
-        _configHandler.readFrom(isA(Reader.class));
-        replay(_configHandler);
+        _parser.parse(isA(Reader.class));
+        replay(_parser);
 
         // setup a test file
         File tmp = tmpFolder.newFile();
@@ -52,13 +60,13 @@ public class XmlConfigurationTest {
         _config.load(tmp);
 
         // verify results
-        verify(_configHandler);
+        verify(_parser);
     }
 
     @Test
     public void save() throws Exception {
-        _configHandler.writeTo(isA(Writer.class));
-        replay(_configHandler);
+        _composer.compose(isA(Writer.class));
+        replay(_composer);
 
         // setup a test file
         File tmp = tmpFolder.newFile();
@@ -66,7 +74,7 @@ public class XmlConfigurationTest {
         _config.save(tmp);
 
         // verify results
-        verify(_configHandler);
+        verify(_composer);
     }
 
     /**
@@ -74,13 +82,9 @@ public class XmlConfigurationTest {
      */
     @Test
     public void dogFood() throws Exception {
-        int bigConfig = 1000;
-
         // create new configuration
-        XmlConfiguration configOut = new XmlConfiguration();
-        for (int i = 0; i < bigConfig; i++) {
-            configOut.addProperty("key" + i, "value" + i);
-        }
+        StrategicConfiguration configOut = new RuntimeConfiguration();
+        configOut.addProperty("key", "value");
 
         // write configuration to file
         File tmpFile = tmpFolder.newFile();
@@ -90,9 +94,7 @@ public class XmlConfigurationTest {
         // Files.readAllLines(tmpFile.toPath()).forEach(line -> System.out.println(line));
 
         // read in configuration
-        XmlConfiguration configIn = new XmlConfiguration(tmpFile);
-        for (int i = 0; i < bigConfig; i++) {
-            assertEquals("value" + i, configIn.getProperty("key" + i));
-        }
+        StrategicConfiguration configIn = new RuntimeConfiguration(tmpFile);
+        assertEquals("value", configIn.getProperty("key"));
     }
 }

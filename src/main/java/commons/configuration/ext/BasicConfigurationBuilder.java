@@ -28,7 +28,7 @@ import org.apache.commons.configuration.SystemConfiguration;
  *     builder.setConfigurations(new SystemConfiguration());
  *     builder.setConfiguration(new PropertiesConfiguration("path/to/props.properties"));
  *     builder.setPropertiesConfiguration("file:/opt/resource/some.properties");
- *     builder.setEnvConfiguration("classpath:envconfig.xml");
+ *     builder.setStrategicConfiguration("classpath:envconfig.xml");
  *     _config = builder.getConfiguration();
  *   }
  *   
@@ -154,7 +154,7 @@ public class BasicConfigurationBuilder implements ConfigurationBuilder {
     }
 
     /**
-     * utility method for adding a {@link XmlConfiguration} using resource resolution similar to spring.
+     * utility method for adding a {@link StrategicConfiguration} using resource resolution similar to spring.
      * 
      * <pre>
      * builder.setPropertiesConfiguration("envconfig.xml");
@@ -163,15 +163,15 @@ public class BasicConfigurationBuilder implements ConfigurationBuilder {
      * builder.setPropertiesConfiguration("file:/path/to/envconfig.xml");
      * </pre>
      * 
-     * @param envLocation
+     * @param configLocation
      *            location of the environment configuration file
      * @return this builder for further setup
      * @see #getConfiguration()
      */
-    public BasicConfigurationBuilder setEnvConfiguration(String envLocation) {
+    public BasicConfigurationBuilder setStrategicConfiguration(String configLocation) {
         try {
-            File envFile = ResourceUtils.getFile(envLocation);
-            return setConfigurations(new XmlConfiguration(envFile));
+            File envFile = ResourceUtils.getFile(configLocation);
+            return setConfigurations(new RuntimeConfiguration(envFile));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

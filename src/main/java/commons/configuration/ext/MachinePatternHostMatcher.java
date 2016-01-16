@@ -1,6 +1,11 @@
 package commons.configuration.ext;
 
-class MachinePatternHostMatcher implements HostMatcher {
+/**
+ * Matches hosts by comparing a host pattern with the runtime environments host name.
+ * 
+ * @author Timothy Storm
+ */
+public class MachinePatternHostMatcher implements HostMatcher {
     private static volatile HostMatcher SINGLETON;
 
     private MachinePatternHostMatcher() {}
@@ -19,6 +24,35 @@ class MachinePatternHostMatcher implements HostMatcher {
         return SINGLETON;
     }
 
+    /**
+     * {@inheritDoc}
+     * To initiate a match, host patterns and must start/end with a backslash - '/'.
+     * <p>
+     * <table border="1">
+     * <tr>
+     * <th>Host Name</th>
+     * <th>Host Pattern</th>
+     * <th>Matches</th>
+     * </tr>
+     * <tr>
+     * <td>xenon-company1.com</td>
+     * <td>/xenon.+/</td>
+     * <td>true</td>
+     * </tr>
+     * </tr>
+     * <tr>
+     * <td>xenon-company2.com</td>
+     * <td>/xenon-company[\\d].+/</td>
+     * <td>true</td>
+     * </tr>
+     * </tr>
+     * <tr>
+     * <td>xenon-company3.com</td>
+     * <td>/xenon-company[1-2].+/</td>
+     * <td>false</td>
+     * </tr>
+     * </table>
+     */
     @Override
     public boolean matches(String host) {
         if (host == null || host.isEmpty()) return false;
