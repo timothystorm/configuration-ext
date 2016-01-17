@@ -1,11 +1,13 @@
 package commons.configuration.ext;
 
 import java.io.File;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URL;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.logging.Log;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
  * A {@link Configuration} that can determine what properties to serve based on the runtime environment.
@@ -14,12 +16,9 @@ import org.apache.commons.logging.Log;
  * 
  * @author Darren Bruxvoort
  * @author Timothy Storm
- * 
  * @see RuntimeConfigurationHandler
  */
-public class RuntimeConfiguration extends StrategicConfiguration {
-
-    private volatile RuntimeConfigurationHandler _instance;
+public class RuntimeConfiguration extends PropertiesConfiguration {
 
     public RuntimeConfiguration() {
         super();
@@ -33,35 +32,21 @@ public class RuntimeConfiguration extends StrategicConfiguration {
         super(fileName);
     }
 
-    @Override
-    public void addProperty(String key, Object value) {
-        super.addProperty(key, value);
-    }
-
     public RuntimeConfiguration(URL url) throws ConfigurationException {
         super(url);
     }
 
-    private RuntimeConfigurationHandler getHandler() {
-        if (_instance == null) {
-            synchronized (RuntimeConfiguration.class) {
-                if (_instance == null) {
-                    Log log = getLogger();
-                    if (log.isDebugEnabled()) log.debug("creating " + RuntimeConfigurationHandler.class);
-                    _instance = new RuntimeConfigurationHandler(this);
-                }
-            }
-        }
-        return _instance;
+    protected ConfigurationHandler getConfigurationHandler() {
+        return new RuntimeConfigurationHandler();
     }
 
     @Override
-    protected ConfigurationParser getConfigurationParser() {
-        return getHandler();
+    public synchronized void load(Reader reader) throws ConfigurationException {
+        getConfigurationHandler().load(reader, this);
     }
 
     @Override
-    protected ConfigurationComposer getConfigurationComposer() {
-        return getHandler();
+    public void save(Writer writer) throws ConfigurationException {
+        getConfigurationHandler().save(writer, this);
     }
 }

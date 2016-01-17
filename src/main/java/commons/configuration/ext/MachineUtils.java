@@ -2,7 +2,6 @@ package commons.configuration.ext;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
@@ -97,27 +96,5 @@ class MachineUtils {
             }
         }
         return LOCAL_HOST;
-    }
-
-    /**
-     * Determines hardware address of the interface if it has one and if it can
-     * be accessed given the current privileges.
-     * 
-     * @return MAC address or null on failure
-     */
-    public static String macAddress() {
-        NetworkInterface network;
-        try {
-            network = NetworkInterface.getByInetAddress(localHost());
-            byte[] mac = network.getHardwareAddress();
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < mac.length; i++) {
-                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-            }
-            return sb.toString();
-        } catch (SocketException e) {
-            return null;
-        }
     }
 }

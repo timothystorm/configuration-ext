@@ -23,7 +23,8 @@ public class RuntimeConfigurationHandlerTest {
     
     @Before
     public void setUp() throws Exception{
-        _handler = new RuntimeConfigurationHandler((_config = createMock(Configuration.class)));
+        _config = createMock(Configuration.class);
+        _handler = new RuntimeConfigurationHandler();
     }
     
     @Test
@@ -33,7 +34,7 @@ public class RuntimeConfigurationHandlerTest {
         
         File tmp = tmpFolder.newFile();
         Files.write(tmp.toPath(), omegaXml().getBytes());
-        _handler.parse(new FileReader(tmp));
+        _handler.load(new FileReader(tmp), _config);
         
         verify(_config);
     }

@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 
+import org.apache.commons.configuration.Configuration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,24 +24,16 @@ public class RuntimeConfigurationTest {
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
 
-    ConfigurationParser    _parser;
-    ConfigurationComposer  _composer;
-    StrategicConfiguration _config;
+    ConfigurationHandler _handler;
+    RuntimeConfiguration _config;
 
     @Before
     public void setUp() throws Exception {
-        _parser = createMock(ConfigurationParser.class);
-        _composer = createMock(ConfigurationComposer.class);
-
+        _handler = createMock(ConfigurationHandler.class);
         _config = new RuntimeConfiguration() {
             @Override
-            protected ConfigurationParser getConfigurationParser() {
-                return _parser;
-            }
-
-            @Override
-            protected ConfigurationComposer getConfigurationComposer() {
-                return _composer;
+            protected ConfigurationHandler getConfigurationHandler() {
+                return _handler;
             }
         };
     }
@@ -51,8 +44,8 @@ public class RuntimeConfigurationTest {
     @Test
     public void load() throws Exception {
         // setup expectations
-        _parser.parse(isA(Reader.class));
-        replay(_parser);
+        _handler.load(isA(Reader.class), isA(RuntimeConfiguration.class));
+        replay(_handler);
 
         // setup a test file
         File tmp = tmpFolder.newFile();
@@ -60,13 +53,13 @@ public class RuntimeConfigurationTest {
         _config.load(tmp);
 
         // verify results
-        verify(_parser);
+        verify(_handler);
     }
 
     @Test
     public void save() throws Exception {
-        _composer.compose(isA(Writer.class));
-        replay(_composer);
+        _handler.save(isA(Writer.class), isA(Configuration.class));
+        replay(_handler);
 
         // setup a test file
         File tmp = tmpFolder.newFile();
@@ -74,7 +67,7 @@ public class RuntimeConfigurationTest {
         _config.save(tmp);
 
         // verify results
-        verify(_composer);
+        verify(_handler);
     }
 
     /**
@@ -83,7 +76,7 @@ public class RuntimeConfigurationTest {
     @Test
     public void dogFood() throws Exception {
         // create new configuration
-        StrategicConfiguration configOut = new RuntimeConfiguration();
+        RuntimeConfiguration configOut = new RuntimeConfiguration();
         configOut.addProperty("key", "value");
 
         // write configuration to file
@@ -94,7 +87,7 @@ public class RuntimeConfigurationTest {
         // Files.readAllLines(tmpFile.toPath()).forEach(line -> System.out.println(line));
 
         // read in configuration
-        StrategicConfiguration configIn = new RuntimeConfiguration(tmpFile);
+        RuntimeConfiguration configIn = new RuntimeConfiguration(tmpFile);
         assertEquals("value", configIn.getProperty("key"));
     }
 }

@@ -1,5 +1,7 @@
 package commons.configuration.ext;
 
+import static java.lang.String.format;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -20,6 +22,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -30,8 +33,6 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.NoOpLog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -40,42 +41,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Parses and composes a runtime configuration.
+ * Loads and writes runtime configurations.
  * 
  * @author Darrent Bruxvoort
  * @author Timothy Storm
- * @see runtime-configuration-1.0.0.xsd
  */
-class RuntimeConfigurationHandler extends DefaultHandler implements ConfigurationParser, ConfigurationComposer {
-
-    /** Stores the logger. */
-    private Log _log;
-
-    /**
-     * Allows to set the logger to be used by this handler. This
-     * method makes it possible for clients to exactly control logging behavior.
-     * Per default a logger is set that will ignore all log messages. Derived
-     * classes that want to enable logging should call this method during their
-     * initialization with the logger to be used.
-     *
-     * @param log
-     *            the new logger
-     * @since 1.4
-     */
-    public void setLogger(Log log) {
-        _log = (log != null) ? log : new NoOpLog();
-    }
-
-    /**
-     * Returns the logger used by this configuration object.
-     *
-     * @return the logger
-     * @since 1.4
-     */
-    public Log getLogger() {
-        return _log;
-    }
-
+public class RuntimeConfigurationHandler extends DefaultHandler implements ConfigurationHandler {
     /**
      * Attributes of configuration
      */
@@ -96,27 +67,22 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
         static final String VALUE         = "value";
     }
 
-    /** schema filename used for schema validation */
-    private static String _configurationSchema = "runtime-configuration-1.0.0.xsd";
-
-    private static final String ENCODING = "UTF-8";
-
     /** schema namespace */
     private static final String NAMESPACE = "http://commons.apache.org/schema/runtime-configuration-1.0.0";
 
-    /** configuration callback */
-    private final Configuration _config;
+    /** schema name */
+    private static final String SCHEMA = format("%s.xsd", NAMESPACE.substring(NAMESPACE.lastIndexOf('/') + 1));
 
     private String _hostEnvironmentState, _propertyKeyState, _propertyEnvironmentState;
 
     /** matches the runtime environment with the configured host(s) */
     private final HostMatcher _hostMatcher;
 
-    /** <env,[hosts]> */
-    Map<String, List<String>> _hosts = new HashMap<>();
+    /** <env,[hosts,...]> */
+    private Map<String, List<String>> _hosts = new HashMap<>();
 
     /** <key, <env, value>> */
-    Map<String, Map<String, String>> _properties = new HashMap<>();
+    private Map<String, Map<String, String>> _runtimeProperties = new HashMap<>();
 
     /** FSM parse stack */
     Stack<String> _state;
@@ -124,11 +90,9 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
     /** holds the current state of the value */
     StringBuilder _valueState;
 
-    public RuntimeConfigurationHandler(Configuration config) {
-        _config = config;
+    public RuntimeConfigurationHandler() {
         _hostMatcher = new CompoundHostMatcher(LocalHostMatcher.singleton(), MachineHostMatcher.singleton(),
                 MachinePatternHostMatcher.singleton());
-        setLogger(null);
     }
 
     private void assignHost(String host) throws SAXException {
@@ -146,7 +110,7 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
      * @see #assignHost(String)
      */
     private void assignHostEnvironment(String env) throws SAXException {
-        if (env == null) throw new SAXException("hots[@env] attribute required!");
+        if (env == null) throw new SAXException("hosts[@env] attribute required!");
 
         String escape = StringEscapeUtils.escapeXml(env);
         _hosts.put((_hostEnvironmentState = StringUtils.trim(escape)), new ArrayList<String>());
@@ -154,14 +118,14 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
 
     private void assignProperty(String property) throws SAXException {
         if (property == null) throw new SAXException("hosts:host element required!");
-        _properties.get(_propertyKeyState).put(_propertyEnvironmentState, StringUtils.trim(property));
+        _runtimeProperties.get(_propertyKeyState).put(_propertyEnvironmentState, StringUtils.trim(property));
     }
 
     private void assignPropertyKey(String key) throws SAXException {
         if (key == null) throw new SAXException("property[@key] required!");
 
         String escape = StringEscapeUtils.escapeXml(key);
-        _properties.put((_propertyKeyState = StringUtils.trim(escape)), new HashMap<String, String>());
+        _runtimeProperties.put((_propertyKeyState = StringUtils.trim(escape)), new HashMap<String, String>());
     }
 
     private void assignValueEnvironment(String valueEnv) throws SAXException {
@@ -174,120 +138,6 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         _valueState.append(ch, start, length);
-    }
-
-    /**
-     * Writes a template to be enriched with the particulars. This can also be used to create a template for further
-     * configurations.
-     * <p>
-     * Create a new configuration...
-     * 
-     * <pre>
-     * EnvironmentConfiguration config = new EnvironmentConfiguration();
-     * config.addProperty("key1", "value1");
-     * config.addProperty("key2", "value2");
-     * 
-     * File configFile = new File("my-config.xml");
-     * config.save(configFile);
-     * </pre>
-     * <p>
-     * Generates configuration file...
-     * 
-     * <pre>
-     * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
-     * &lt;configuration xmlns:conf="http://commons.apache.org/schema/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://commons.apache.org/schema/configuration configuration-1.0.0.xsd"&gt;
-     *   &lt;context&gt;
-     *       &lt;hosts env="0"&gt;
-     *         &lt;host&gt;CFSIT111111.corp.ds.env.com&lt;/host&gt;
-     *       &lt;/hosts&gt;
-     *   &lt;/context&gt;
-     *   
-     *   &lt;property key="key1"&gt;
-     *       &lt;value env="0"&gt;value1&lt;/value&gt;
-     *   &lt;/property&gt;
-     *   
-     *   &lt;property key="key2"&gt;
-     *       &lt;value env="0"&gt;value2&lt;/value&gt;
-     *   &lt;/property&gt;
-     *&lt;/configuration&gt;
-     * </pre>
-     */
-    @Override
-    public void compose(final Writer writer) throws ConfigurationException {
-        try {
-            Log log = getLogger();
-            if (log.isDebugEnabled()) log.debug("configuration composition start...");
-
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = factory.newDocumentBuilder();
-            Document doc = docBuilder.newDocument();
-            doc.setXmlVersion("1.0");
-
-            // configuration
-            Element configuration = doc.createElementNS(NAMESPACE, Elem.CONFIGURATION);
-            configuration.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xs:schemaLocation",
-                    String.join(" ", NAMESPACE, _configurationSchema));
-            doc.appendChild(configuration);
-
-            // context
-            Element context = doc.createElement(Elem.CONTEXT);
-            configuration.appendChild(context);
-
-            // hosts
-            Element hosts = doc.createElement(Elem.HOSTS);
-            hosts.setAttribute(Attr.ENV, "0");
-            context.appendChild(hosts);
-
-            // host
-            Element host = doc.createElement(Elem.HOST);
-            host.setTextContent("localhost");
-            hosts.appendChild(host);
-
-            // property/values
-            for (Iterator<String> keys = _config.getKeys(); keys.hasNext();) {
-                String key = keys.next();
-                Object value = _config.getProperty(key);
-
-                if (value != null) {
-                    // prepare the value
-                    String v = StringEscapeUtils.escapeXml(String.valueOf(value));
-                    v = StringUtils.replace(v, String.valueOf(','), "\\" + ',');
-
-                    // property
-                    Element property = doc.createElement(Elem.PROPERTY);
-                    property.setAttribute(Attr.KEY, StringEscapeUtils.escapeXml(key));
-                    configuration.appendChild(property);
-
-                    // value
-                    Element val = doc.createElement(Elem.VALUE);
-                    val.setAttribute(Attr.ENV, "0");
-                    val.setTextContent(v);
-                    property.appendChild(val);
-                }
-            }
-
-            // output the results
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING);
-
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(writer);
-            transformer.transform(source, result);
-
-            if (log.isDebugEnabled()) log.debug("configuration composition end...");
-        } catch (Exception e) {
-            throw new ConfigurationException(e);
-        }
-    }
-
-    @Override
-    public void endDocument() throws SAXException {
-        for (Entry<Object, Object> entry : getProperties().entrySet()) {
-            _config.addProperty((String) entry.getKey(), StringUtils.trim((String) entry.getValue()));
-        }
     }
 
     /**
@@ -318,15 +168,15 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
             }
         }
 
-        throw new SAXException(String.format("No host env found for [" + hostsTried + "]"));
+        throw new SAXException(String.format("No host[@env] found for [" + hostsTried + "]"));
     }
 
-    private Properties getProperties() throws SAXException {
+    private Properties getRuntimeProperties() throws SAXException {
         Properties environmentProperties = new Properties();
         String environment = getHostEnvironment();
 
         // iterate properties and pull out the appropriate environment value
-        for (Entry<String, Map<String, String>> properties : _properties.entrySet()) {
+        for (Entry<String, Map<String, String>> properties : _runtimeProperties.entrySet()) {
             String key = properties.getKey();
             String environmentValue = properties.getValue().get(environment);
             if (environmentValue != null) environmentProperties.put(key, environmentValue);
@@ -336,11 +186,13 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
     }
 
     @Override
-    public void parse(Reader reader) throws ConfigurationException {
+    public synchronized void load(Reader source, Configuration config) throws ConfigurationException {
+        if (config == null) throw new NullPointerException();
+
         try {
             // setup the schema
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = schemaFactory.newSchema(ClassPathUtils.loadResource(_configurationSchema));
+            Schema schema = schemaFactory.newSchema(ClassPathUtils.loadResource(SCHEMA));
 
             // setup the parser factory
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -348,23 +200,86 @@ class RuntimeConfigurationHandler extends DefaultHandler implements Configuratio
             factory.setValidating(true);
             factory.setNamespaceAware(true);
 
-            // parse the input
+            // parse the source
             SAXParser parser = factory.newSAXParser();
+            parser.parse(new InputSource(source), this);
 
-            Log log = getLogger();
-            if (log.isDebugEnabled()) getLogger().debug("level configuration parse starting...");
-            {
-                parser.parse(new InputSource(reader), this);
+            // push the parsed properties into the configuration
+            for (Entry<Object, Object> entry : getRuntimeProperties().entrySet()) {
+                config.addProperty((String) entry.getKey(), StringUtils.trim((String) entry.getValue()));
             }
-            if (log.isDebugEnabled()) getLogger().debug("level configuration parse end.");
-        } catch (ParserConfigurationException | SAXException |
-
-        IOException e)
-
-        {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new ConfigurationException(e);
         }
+    }
 
+    @Override
+    public synchronized void save(final Writer destination, final Configuration config) throws ConfigurationException {
+        if (config == null) throw new NullPointerException();
+
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder;
+            docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            doc.setXmlVersion("1.0");
+
+            // configuration
+            Element configuration = doc.createElementNS(NAMESPACE, Elem.CONFIGURATION);
+            configuration.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xs:schemaLocation",
+                    String.join(" ", NAMESPACE, SCHEMA));
+            doc.appendChild(configuration);
+
+            // context
+            Element context = doc.createElement(Elem.CONTEXT);
+            configuration.appendChild(context);
+
+            // hosts
+            Element hosts = doc.createElement(Elem.HOSTS);
+            hosts.setAttribute(Attr.ENV, "0");
+            context.appendChild(hosts);
+
+            // host
+            Element host = doc.createElement(Elem.HOST);
+            host.setTextContent("localhost");
+            hosts.appendChild(host);
+
+            // property/values
+            for (Iterator<String> keys = config.getKeys(); keys.hasNext();) {
+                String key = keys.next();
+                Object value = config.getProperty(key);
+
+                if (value != null) {
+                    // prepare the value
+                    String v = StringEscapeUtils.escapeXml(String.valueOf(value));
+                    v = StringUtils.replace(v, String.valueOf(','), "\\" + ',');
+
+                    // property
+                    Element property = doc.createElement(Elem.PROPERTY);
+                    property.setAttribute(Attr.KEY, StringEscapeUtils.escapeXml(key));
+                    configuration.appendChild(property);
+
+                    // value
+                    Element val = doc.createElement(Elem.VALUE);
+                    val.setAttribute(Attr.ENV, "0");
+                    val.setTextContent(v);
+                    property.appendChild(val);
+                }
+            }
+
+            // output the results
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(destination);
+            transformer.transform(source, result);
+        } catch (ParserConfigurationException | TransformerException e) {
+            throw new ConfigurationException(e);
+        }
     }
 
     @Override

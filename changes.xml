@@ -6,9 +6,20 @@
 		<author email="timothystorm@gmail.com">Timothy Storm</author>
 	</properties>
 	<body>
-		<release version="1.0" date="2015-12-22" description="Initial release">
+		<release version="0.0.0" date="2015-12-22" description="Initial release">
 			<action dev="timothystorm" type="add">
 				Created initial release
+			</action>
+		</release>
+		<release version="1.0.0" date="2016-01-17">
+			<action dev="timothystorm" type="update">
+				Strategized the parsing and writing of configurations sources.
+			</action>
+			<action dev="timothystorm" type="add">
+				Added additional host matching using regex patterns
+			</action>
+			<action dev="timothystorm" type="fix">
+				Fixed unit tests to comply to the improvement changes made
 			</action>
 		</release>
 	</body>

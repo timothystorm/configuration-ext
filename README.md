@@ -18,9 +18,9 @@ component.  The only difference is the resource file, which is structured xml da
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <conf:configuration 
-  xmlns:conf="http://commons.apache.org/schema/configuration" 
+  xmlns:conf="http://commons.apache.org/schema/runtime-configuration-1.0.0" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://commons.apache.org/schema/configuration configuration-1.0.0.xsd">
+  xsi:schemaLocation="http://commons.apache.org/schema/runtime-configuration-1.0.0 runtime-configuration-1.0.0">
   <conf:context>
     <conf:hosts env="DEV">
       <conf:host>localhost</conf:host>
