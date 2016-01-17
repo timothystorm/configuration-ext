@@ -45,12 +45,9 @@ component.  The only difference is the resource file, which is structured xml da
 Then you use the configuration as usual.
 
 ```
-EnvConfiguration config = new EnvConfiguration("/path/to/config.xml");
+RuntimeConfiguration config = new RuntimeConfiguration("/path/to/config.xml");
 String url = config.getString("database_url");
 ```
-## History
-
-Initial deployment
 
 ## License
 

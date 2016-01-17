@@ -21,6 +21,9 @@
 			<action dev="timothystorm" type="fix">
 				Fixed unit tests to comply to the improvement changes made
 			</action>
+			<action dev="timothystorm" type="update">
+                Removed unused classes
+            </action>
 		</release>
 	</body>
 </document>
