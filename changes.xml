@@ -13,17 +13,23 @@
 		</release>
 		<release version="1.0.0" date="2016-01-17">
 			<action dev="timothystorm" type="update">
-				Strategized the parsing and writing of configurations sources.
+				Strategized the parsing and
+				writing of configurations sources.
 			</action>
 			<action dev="timothystorm" type="add">
-				Added additional host matching using regex patterns
+				Added additional host matching
+				using regex patterns
 			</action>
 			<action dev="timothystorm" type="fix">
-				Fixed unit tests to comply to the improvement changes made
+				Fixed unit tests to comply to
+				the improvement changes made
 			</action>
 			<action dev="timothystorm" type="update">
-                Removed unused classes
-            </action>
+				Removed unused classes
+			</action>
+			<action dev="timothystorm" type="update">
+				Added ability to handle global (*) environment properties
+			</action>
 		</release>
 	</body>
 </document>
