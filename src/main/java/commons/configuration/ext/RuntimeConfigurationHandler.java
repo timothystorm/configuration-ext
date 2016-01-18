@@ -67,6 +67,8 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
         static final String VALUE         = "value";
     }
 
+    private static final String GLOB_ENV_KEY = "*";
+
     /** schema namespace */
     private static final String NAMESPACE = "http://commons.apache.org/schema/runtime-configuration-1.0.0";
 
@@ -158,7 +160,7 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
      * @throws SAXException
      *             if the host env cannot be determined.
      */
-    private String getHostEnvironment() throws SAXException {
+    private String getHostEnvironment() throws ConfigurationException {
         StringBuilder hostsTried = new StringBuilder();
 
         for (Entry<String, List<String>> entry : _hosts.entrySet()) {
@@ -168,21 +170,28 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
             }
         }
 
-        throw new SAXException(String.format("No host[@env] found for [" + hostsTried + "]"));
+        throw new ConfigurationException(String.format("No host[@env] found for [" + hostsTried + "]"));
     }
 
-    private Properties getRuntimeProperties() throws SAXException {
-        Properties environmentProperties = new Properties();
-        String environment = getHostEnvironment();
+    /**
+     * Creates {@link Properties} with only the runtime values
+     * 
+     * @return runtime {@link Properties}s
+     * @throws SAXException
+     */
+    private Properties getRuntimeProperties() throws ConfigurationException {
+        final Properties runtimeProperties = new Properties();
+        final String env = getHostEnvironment();
 
-        // iterate properties and pull out the appropriate environment value
         for (Entry<String, Map<String, String>> properties : _runtimeProperties.entrySet()) {
             String key = properties.getKey();
-            String environmentValue = properties.getValue().get(environment);
-            if (environmentValue != null) environmentProperties.put(key, environmentValue);
+            String value = null;
+            if (value == null /* global */) value = properties.getValue().get(GLOB_ENV_KEY);
+            if (value == null /* environment */) value = properties.getValue().get(env);
+            if (value != null) runtimeProperties.put(key, value);
         }
 
-        return environmentProperties;
+        return runtimeProperties;
     }
 
     @Override
