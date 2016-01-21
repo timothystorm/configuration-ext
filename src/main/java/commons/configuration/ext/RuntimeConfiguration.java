@@ -47,6 +47,6 @@ public class RuntimeConfiguration extends PropertiesConfiguration {
 
     @Override
     public void save(Writer writer) throws ConfigurationException {
-        getConfigurationHandler().save(writer, this);
+        getConfigurationHandler().save(this, writer);
     }
 }

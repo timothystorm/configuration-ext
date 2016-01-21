@@ -1,7 +1,11 @@
 package commons.configuration.ext;
 
 /**
+ * <p>
  * Matches hosts if they are assigned the localhost identity or alias: localhost, 127.0.0.1, ::1.
+ * <p>
+ * Take care using this where other {@link HostMatcher}s fail this will almost always pass, even in a
+ * production environment.
  * 
  * @author Timothy Storm
  */

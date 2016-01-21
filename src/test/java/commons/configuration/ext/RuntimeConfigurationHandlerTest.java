@@ -57,7 +57,7 @@ public class RuntimeConfigurationHandlerTest {
         replay(_config);
 
         File tmp = tmpFolder.newFile();
-        _handler.save(new FileWriter(tmp), _config);
+        _handler.save(_config, new FileWriter(tmp));
 
         // verify config behavior
         verify(_config);

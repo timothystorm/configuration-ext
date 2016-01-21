@@ -93,8 +93,9 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
     StringBuilder _valueState;
 
     public RuntimeConfigurationHandler() {
-        _hostMatcher = new CompoundHostMatcher(LocalHostMatcher.singleton(), MachineHostMatcher.singleton(),
-                MachinePatternHostMatcher.singleton());
+        // match specifically to generally
+        _hostMatcher = new CompoundHostMatcher(MachineHostMatcher.singleton(),
+                MachinePatternHostMatcher.singleton(), LocalHostMatcher.singleton());
     }
 
     private void assignHost(String host) throws SAXException {
@@ -194,6 +195,12 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
         return runtimeProperties;
     }
 
+    /**
+     * {@inheritDoc}
+     * Loads a runtime xml configuration source into the target {@link Configuration}
+     * 
+     * @see {@link Configuration#setProperty(String, Object)}
+     */
     @Override
     public synchronized void load(Reader source, Configuration config) throws ConfigurationException {
         if (config == null) throw new NullPointerException();
@@ -222,8 +229,15 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * saves a zero level xml configuration template
+     * 
+     * @see {@link Configuration#getKeys()}
+     * @see {@link Configuration#getKeys(String)}
+     */
     @Override
-    public synchronized void save(final Writer destination, final Configuration config) throws ConfigurationException {
+    public synchronized void save(final Configuration config, final Writer destination) throws ConfigurationException {
         if (config == null) throw new NullPointerException();
 
         try {

@@ -58,7 +58,7 @@ public class RuntimeConfigurationTest {
 
     @Test
     public void save() throws Exception {
-        _handler.save(isA(Writer.class), isA(Configuration.class));
+        _handler.save(isA(Configuration.class), isA(Writer.class));
         replay(_handler);
 
         // setup a test file
