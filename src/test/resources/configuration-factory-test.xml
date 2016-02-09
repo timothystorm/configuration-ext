@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="AppConfig" class="commons.configuration.ext.spring.ConfigurationFactory">
+        <constructor-arg>
+            <list>
+                <bean class="org.apache.commons.configuration.PropertiesConfiguration">
+                    <constructor-arg value="classpath:configuration-factory-test.properties" type="java.io.File" />
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ConfigurationFactoryTest" class="commons.configuration.ext.spring.ConfigurationFactoryTest$Configurable">
+        <property name="configuration" ref="AppConfig" />
+    </bean>
+</beans>

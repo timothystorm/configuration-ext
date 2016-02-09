@@ -43,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Loads and writes runtime configurations.
  * 
- * @author Darrent Bruxvoort
+ * @author Darren Bruxvoort
  * @author Timothy Storm
  */
 public class RuntimeConfigurationHandler extends DefaultHandler implements ConfigurationHandler {

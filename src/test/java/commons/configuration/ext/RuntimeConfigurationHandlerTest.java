@@ -38,7 +38,7 @@ public class RuntimeConfigurationHandlerTest {
         _config.addProperty("cdata_key", "<cdata><value/></cdata>");
         _config.addProperty("global_key", "global_value");
         replay(_config);
-
+        
         File tmp = tmpFolder.newFile();
         Files.write(tmp.toPath(), xml().getBytes());
         _handler.load(new FileReader(tmp), _config);
