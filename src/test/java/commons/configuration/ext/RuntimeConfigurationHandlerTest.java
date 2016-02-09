@@ -68,9 +68,9 @@ public class RuntimeConfigurationHandlerTest {
      */
     String xml() {
         StringBuilder xml = new StringBuilder();
-        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
         xml.append(
-                "<configuration xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\" xs:schemaLocation=\"http://commons.apache.org/schema/runtime-configuration-1.0.0 runtime-configuration-1.0.0.xsd\" xmlns=\"http://commons.apache.org/schema/runtime-configuration-1.0.0\">");
+                "<configuration xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\" xs:schemaLocation=\"http://commons.apache.org/schema/runtime-configuration-1.0.0.xsd runtime-configuration-1.0.0.xsd\" xmlns=\"http://commons.apache.org/schema/runtime-configuration-1.0.0\">");
         {
             xml.append("<context>");
             {

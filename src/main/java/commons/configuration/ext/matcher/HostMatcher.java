@@ -1,4 +1,4 @@
-package commons.configuration.ext;
+package commons.configuration.ext.matcher;
 
 /**
  * Matches a host from a configuration based on criteria specific to an implementation. An affirmative answer is used to
@@ -8,7 +8,7 @@ package commons.configuration.ext;
  * 
  * @author Timothy Storm
  */
-interface HostMatcher {
+public interface HostMatcher {
     /**
      * Determines if the host matches the implementation criteria.
      * 

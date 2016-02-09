@@ -1,4 +1,4 @@
-package commons.configuration.ext;
+package commons.configuration.ext.matcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +50,10 @@ public class CompoundHostMatcher implements HostMatcher {
      */
     @Override
     public boolean matches(final String host) {
-        return getHostMatchersInternal().stream().anyMatch(m -> m.matches(host));
+        for (HostMatcher matcher : getHostMatchersInternal()) {
+            if (matcher.matches(host)) return true;
+        }
+        return false;
     }
 
     /**

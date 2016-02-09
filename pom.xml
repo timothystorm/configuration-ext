@@ -33,7 +33,7 @@
     <properties>
         <!-- project props -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>1.7</jdk.version>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ssX</maven.build.timestamp.format>
 
@@ -147,6 +147,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

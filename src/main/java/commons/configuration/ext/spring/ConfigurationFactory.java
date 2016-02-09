@@ -11,7 +11,7 @@ import org.springframework.beans.factory.FactoryBean;
 /**
  * <p>
  * Factory that aids in the creation of a spring injected {@link Configuration}s
- * <p>
+ * </p>
  * 
  * <pre>
  * &lt;bean id="AppConfig" class="commons.configuration.ext.spring.ConfigurationFactory"&gt;
@@ -68,6 +68,7 @@ public class ConfigurationFactory implements FactoryBean<Configuration> {
      * Sets the {@link Configuration}s to be used to built {@link Configuration}
      * 
      * @param configs
+     *            to be added to the built {@link Configuration}
      * @see #getObject()
      */
     public void setConfigurations(Configuration... configs) {
@@ -79,6 +80,7 @@ public class ConfigurationFactory implements FactoryBean<Configuration> {
      * Sets the {@link Configuration}s to be used to built {@link Configuration}
      * 
      * @param configs
+     *            to be added to the built {@link Configuration}
      * @see #getObject()
      */
     public void setConfigurations(Collection<Configuration> configs) {

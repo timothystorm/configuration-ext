@@ -1,4 +1,4 @@
-package commons.configuration.ext;
+package commons.configuration.ext.matcher;
 
 /**
  * Matches hosts if they are assigned the computer name or IP of the runtime environment. Example: 192.168.56.1,

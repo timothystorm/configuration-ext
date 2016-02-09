@@ -1,8 +1,11 @@
-package commons.configuration.ext;
+package commons.configuration.ext.matcher;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import commons.configuration.ext.matcher.HostMatcher;
+import commons.configuration.ext.matcher.LocalHostMatcher;
 
 public class LocalHostMatcherTest {
     HostMatcher _matcher = LocalHostMatcher.singleton();

@@ -1,4 +1,4 @@
-package commons.configuration.ext;
+package commons.configuration.ext.matcher;
 
 /**
  * Matches hosts by comparing a host pattern with the runtime environments host name.
@@ -26,32 +26,19 @@ public class MachinePatternHostMatcher implements HostMatcher {
 
     /**
      * {@inheritDoc}
-     * To initiate a match, host patterns and must start/end with a backslash - '/'.
      * <p>
-     * <table border="1">
-     * <tr>
-     * <th>Host Name</th>
-     * <th>Host Pattern</th>
-     * <th>Matches</th>
-     * </tr>
-     * <tr>
-     * <td>xenon-company1.com</td>
-     * <td>/xenon.+/</td>
-     * <td>true</td>
-     * </tr>
-     * </tr>
-     * <tr>
-     * <td>xenon-company2.com</td>
-     * <td>/xenon-company[\\d].+/</td>
-     * <td>true</td>
-     * </tr>
-     * </tr>
-     * <tr>
-     * <td>xenon-company3.com</td>
-     * <td>/xenon-company[1-2].+/</td>
-     * <td>false</td>
-     * </tr>
-     * </table>
+     * To initiate a pattern match, host patterns must start/end with a backslash - '/'.
+     * </p>
+     * <ul>
+     * <li>
+     * Host [xenon-company1.com]
+     * <ul>
+     * <li>/xenon.+/ = true</li>
+     * <li>/xenon-company[\\d].+/ = true</li>
+     * <li>/xenon-company[2].+/ = false</li>
+     * </ul>
+     * </li>
+     * </ul>
      */
     @Override
     public boolean matches(String host) {

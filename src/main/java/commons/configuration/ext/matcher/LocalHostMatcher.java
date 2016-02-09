@@ -1,4 +1,4 @@
-package commons.configuration.ext;
+package commons.configuration.ext.matcher;
 
 /**
  * <p>
@@ -13,7 +13,7 @@ public class LocalHostMatcher implements HostMatcher {
 
     private static volatile HostMatcher SINGLETON;
 
-    static HostMatcher singleton() {
+    public static HostMatcher singleton() {
         if (SINGLETON == null) {
             synchronized (LocalHostMatcher.class) {
                 if (SINGLETON == null) SINGLETON = new LocalHostMatcher() {

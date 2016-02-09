@@ -40,6 +40,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import commons.configuration.ext.matcher.CompoundHostMatcher;
+import commons.configuration.ext.matcher.HostMatcher;
+import commons.configuration.ext.matcher.LocalHostMatcher;
+import commons.configuration.ext.matcher.MachineHostMatcher;
+import commons.configuration.ext.matcher.MachinePatternHostMatcher;
+
 /**
  * Loads and writes runtime configurations.
  * 
@@ -94,8 +100,8 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     public RuntimeConfigurationHandler() {
         // match specifically to generally
-        _hostMatcher = new CompoundHostMatcher(MachineHostMatcher.singleton(),
-                MachinePatternHostMatcher.singleton(), LocalHostMatcher.singleton());
+        _hostMatcher = new CompoundHostMatcher(MachineHostMatcher.singleton(), MachinePatternHostMatcher.singleton(),
+                LocalHostMatcher.singleton());
     }
 
     private void assignHost(String host) throws SAXException {
@@ -198,8 +204,6 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
     /**
      * {@inheritDoc}
      * Loads a runtime xml configuration source into the target {@link Configuration}
-     * 
-     * @see {@link Configuration#setProperty(String, Object)}
      */
     @Override
     public synchronized void load(Reader source, Configuration config) throws ConfigurationException {
@@ -232,9 +236,6 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
     /**
      * {@inheritDoc}
      * saves a zero level xml configuration template
-     * 
-     * @see {@link Configuration#getKeys()}
-     * @see {@link Configuration#getKeys(String)}
      */
     @Override
     public synchronized void save(final Configuration config, final Writer destination) throws ConfigurationException {
@@ -250,7 +251,8 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
             // configuration
             Element configuration = doc.createElementNS(NAMESPACE, Elem.CONFIGURATION);
             configuration.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xs:schemaLocation",
-                    String.join(" ", NAMESPACE, SCHEMA));
+                    NAMESPACE + " " + SCHEMA);
+
             doc.appendChild(configuration);
 
             // context
