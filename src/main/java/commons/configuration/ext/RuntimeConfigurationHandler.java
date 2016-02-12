@@ -226,7 +226,7 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
             // push the parsed properties into the configuration
             for (Entry<Object, Object> entry : getRuntimeProperties().entrySet()) {
-                config.addProperty((String) entry.getKey(), StringUtils.trim((String) entry.getValue()));
+                config.addProperty((String) entry.getKey(), (String) entry.getValue());
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new ConfigurationException(e);

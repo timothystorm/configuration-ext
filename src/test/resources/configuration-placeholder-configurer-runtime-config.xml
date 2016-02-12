@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<conf:configuration
+	xmlns:conf="http://commons.apache.org/schema/env-configuration-1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://commons.apache.org/schema/env-configuration-1.0.0 ../../main/resources/runtime-configuration-1.0.0.xsd ">
+	<conf:context>
+		<conf:hosts env="test">
+			<conf:host>localhost</conf:host>
+		</conf:hosts>
+	</conf:context>
+
+	<conf:property key="key1">
+		<conf:value env="test">value1</conf:value>
+		<conf:value env="0">badvalue</conf:value>
+	</conf:property>
+</conf:configuration>

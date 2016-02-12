@@ -32,5 +32,13 @@
                 Added ConfigurationFactory to allow for Spring dependency injection
             </action>
         </release>
+        <release versio="1.1.0" date="2016-02-11">
+        	<action dev="timothystorm" type="add">
+        		Added ConfigurationPlaceholderConfigurer to be used in xml 
+        		context.  Similar to Spring's PropertyPlaceholderConfigurer
+        		but instead of using Property files it uses commons
+        		Configuration as the source of the properties.
+        	</action>
+        </release>
     </body>
 </document>

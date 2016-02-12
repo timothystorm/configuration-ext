@@ -5,5 +5,5 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ConfigurationFactoryTest.class })
+@SuiteClasses({ ConfigurationFactoryTest.class, ConfigurationPlaceholderConfigurerTest.class })
 public class _Suite {}
