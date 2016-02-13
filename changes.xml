@@ -39,6 +39,11 @@
         		but instead of using Property files it uses commons
         		Configuration as the source of the properties.
         	</action>
+        	<action dev="timothystorm" type="update">
+        		Moved the schema definition out of the RuntimeConfigurationHandler
+        	    class into META-INF so upgraded schemas can be configured without
+        	    modifying code.
+        	</action>
         </release>
     </body>
 </document>

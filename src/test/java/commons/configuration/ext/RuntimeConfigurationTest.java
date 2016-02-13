@@ -6,7 +6,9 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -84,10 +86,22 @@ public class RuntimeConfigurationTest {
         configOut.save(tmpFile);
 
         // for debugging purposes
-        // Files.readAllLines(tmpFile.toPath()).forEach(line -> System.out.println(line));
+        // printFile(tmpFile);
 
         // read in configuration
         RuntimeConfiguration configIn = new RuntimeConfiguration(tmpFile);
         assertEquals("value", configIn.getProperty("key"));
+    }
+
+    void printFile(File file) throws Exception {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String line = null;
+            while ((line = reader.readLine()) != null)
+                System.out.println(line);
+        } finally {
+            if (reader != null) reader.close();
+        }
     }
 }

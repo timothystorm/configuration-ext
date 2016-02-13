@@ -1,7 +1,5 @@
 package commons.configuration.ext;
 
-import static java.lang.String.format;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -75,12 +73,6 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     private static final String GLOB_ENV_KEY = "*";
 
-    /** schema namespace */
-    private static final String NAMESPACE = "http://commons.apache.org/schema/runtime-configuration-1.0.0";
-
-    /** schema name */
-    private static final String SCHEMA = format("%s.xsd", NAMESPACE.substring(NAMESPACE.lastIndexOf('/') + 1));
-
     private String _hostEnvironmentState, _propertyKeyState, _propertyEnvironmentState;
 
     /** matches the runtime environment with the configured host(s) */
@@ -93,10 +85,10 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
     private Map<String, Map<String, String>> _runtimeProperties = new HashMap<>();
 
     /** FSM parse stack */
-    Stack<String> _state;
+    private Stack<String> _state;
 
     /** holds the current state of the value */
-    StringBuilder _valueState;
+    private StringBuilder _valueState;
 
     public RuntimeConfigurationHandler() {
         // match specifically to generally
@@ -210,9 +202,12 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
         if (config == null) throw new NullPointerException();
 
         try {
+            // load xml schema
+            RuntimeXmlSchema xmlSchema = RuntimeXmlSchema.instance();
+
             // setup the schema
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = schemaFactory.newSchema(ClassPathUtils.loadResource(SCHEMA));
+            Schema schema = schemaFactory.newSchema(ClassPathUtils.loadResource(xmlSchema.getPath()));
 
             // setup the parser factory
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -248,10 +243,13 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
             Document doc = docBuilder.newDocument();
             doc.setXmlVersion("1.0");
 
+            // load xml schema
+            RuntimeXmlSchema xmlSchema = RuntimeXmlSchema.instance();
+
             // configuration
-            Element configuration = doc.createElementNS(NAMESPACE, Elem.CONFIGURATION);
+            Element configuration = doc.createElementNS(xmlSchema.getNamespace(), Elem.CONFIGURATION);
             configuration.setAttributeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "xs:schemaLocation",
-                    NAMESPACE + " " + SCHEMA);
+                    xmlSchema.getNamespace() + " " + xmlSchema.getSchema());
 
             doc.appendChild(configuration);
 

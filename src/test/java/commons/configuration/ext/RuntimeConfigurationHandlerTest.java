@@ -38,7 +38,7 @@ public class RuntimeConfigurationHandlerTest {
         _config.addProperty("cdata_key", "<cdata><value/></cdata>");
         _config.addProperty("global_key", "global_value");
         replay(_config);
-        
+
         File tmp = tmpFolder.newFile();
         Files.write(tmp.toPath(), xml().getBytes());
         _handler.load(new FileReader(tmp), _config);
@@ -62,7 +62,7 @@ public class RuntimeConfigurationHandlerTest {
         // verify config behavior
         verify(_config);
     }
-    
+
     /**
      * @see #recordLoadExpectations()
      */
@@ -70,7 +70,7 @@ public class RuntimeConfigurationHandlerTest {
         StringBuilder xml = new StringBuilder();
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
         xml.append(
-                "<configuration xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\" xs:schemaLocation=\"http://commons.apache.org/schema/runtime-configuration-1.0.0.xsd runtime-configuration-1.0.0.xsd\" xmlns=\"http://commons.apache.org/schema/runtime-configuration-1.0.0\">");
+                "<configuration xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\" xs:schemaLocation=\"http://commons.apache.org/schema/runtime-configuration runtime-configuration-1.0.xsd\" xmlns=\"http://commons.apache.org/schema/runtime-configuration\">");
         {
             xml.append("<context>");
             {
