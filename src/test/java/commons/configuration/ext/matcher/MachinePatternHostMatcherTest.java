@@ -8,7 +8,7 @@ import commons.configuration.ext.matcher.HostMatcher;
 import commons.configuration.ext.matcher.MachinePatternHostMatcher;
 
 public class MachinePatternHostMatcherTest {
-    HostMatcher _matcher = MachinePatternHostMatcher.singleton();
+    HostMatcher _matcher = MachinePatternHostMatcher.instance();
     
     @Test
     public void match() throws Exception {

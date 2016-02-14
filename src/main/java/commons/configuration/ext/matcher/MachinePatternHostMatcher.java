@@ -10,7 +10,7 @@ public class MachinePatternHostMatcher implements HostMatcher {
 
     private MachinePatternHostMatcher() {}
 
-    public static HostMatcher singleton() {
+    public static HostMatcher instance() {
         if (SINGLETON == null) {
             synchronized (MachineHostMatcher.class) {
                 if (SINGLETON == null) SINGLETON = new MachinePatternHostMatcher() {
@@ -43,7 +43,7 @@ public class MachinePatternHostMatcher implements HostMatcher {
     @Override
     public boolean matches(String host) {
         if (host == null || host.isEmpty()) return false;
-        if (host.startsWith("/") && host.startsWith("/")) {
+        if (host.startsWith("/") && host.endsWith("/")) {
             String pattern = host.substring(1, host.length() - 1);
             return MachineUtils.hostName().matches(pattern);
         }

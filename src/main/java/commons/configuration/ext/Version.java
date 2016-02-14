@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class Version {
 
     private static final String LF = System.getProperty("line.separator");
-    
+
     /** cache application properties so they are not reloaded every time they are accessed */
     private static volatile Properties _propsCache;
 
@@ -48,26 +48,6 @@ public class Version {
     }
 
     /**
-     * @return {@link ClassLoader} to use for resource loading
-     */
-    protected static ClassLoader getDefaultClassLoader() {
-        ClassLoader loader = null;
-        try {
-            loader = Thread.currentThread().getContextClassLoader();
-        } catch (Throwable threadclassloader_notfound) {}
-
-        if (loader == null) {
-            loader = Version.class.getClassLoader();
-            if (loader == null) {
-                try {
-                    loader = ClassLoader.getSystemClassLoader();
-                } catch (Throwable giveup) {}
-            }
-        }
-        return loader;
-    }
-
-    /**
      * @return project.artifactId from pom
      */
     public static String getName() {
@@ -83,7 +63,7 @@ public class Version {
         if (_propsCache == null) {
             synchronized (Version.class) {
                 if (_propsCache == null) {
-                    ClassLoader loader = getDefaultClassLoader();
+                    ClassLoader loader = ClassPathUtils.getDefaultClassLoader();
                     try {
                         InputStream is = loader.getResourceAsStream("version.properties");
                         Properties local = new Properties();
@@ -112,46 +92,25 @@ public class Version {
      *            - ignored
      */
     public static void main(String[] args) {
-        System.out.println(manifest());
-    }
-
-    public static String maintenanceVersion() {
-        return versionPart(3);
-    }
-
-    public static long maintenanceVersionAsLong() {
-        return Long.parseLong(maintenanceVersion());
-    }
-
-    public static String majorVersion() {
-        return versionPart(1);
-    }
-
-    public static long majorVersionAsLong() {
-        return Long.parseLong(majorVersion());
-    }
-
-    /**
-     * Prints a manifest (MANIFEST.MF) style block
-     * 
-     * @return manifest info
-     */
-    public static String manifest() {
         StringBuilder manifest = new StringBuilder();
         manifest.append("Specification-Title: ").append(Version.getName()).append(LF);
         manifest.append("Specification-Version: ").append(Version.majorVersion()).append(LF);
         manifest.append("Implementation-Version: ").append(Version.getVersion()).append(LF);
         manifest.append("Built-At: ").append(Version.builtAt()).append(LF);
         manifest.append("Built-By: ").append(Version.builtBy());
-        return manifest.toString();
+        System.out.println(manifest.toString());
+    }
+
+    public static String maintenanceVersion() {
+        return versionPart(3);
+    }
+
+    public static String majorVersion() {
+        return versionPart(1);
     }
 
     public static String minorVersion() {
         return versionPart(2);
-    }
-
-    public static long minorVersionAsLong() {
-        return Long.parseLong(minorVersion());
     }
 
     /**

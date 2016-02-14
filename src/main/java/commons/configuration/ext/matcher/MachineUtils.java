@@ -90,7 +90,7 @@ class MachineUtils {
                         if (LOCAL_HOST == null) LOCAL_HOST = candidate;
                         if (LOCAL_HOST == null) LOCAL_HOST = InetAddress.getLocalHost();
                     } catch (Exception e) {
-                        return null;
+                        return null; // hope client can live with null
                     }
                 }
             }

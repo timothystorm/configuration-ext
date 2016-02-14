@@ -13,7 +13,7 @@ public class LocalHostMatcher implements HostMatcher {
 
     private static volatile HostMatcher SINGLETON;
 
-    public static HostMatcher singleton() {
+    public static HostMatcher instance() {
         if (SINGLETON == null) {
             synchronized (LocalHostMatcher.class) {
                 if (SINGLETON == null) SINGLETON = new LocalHostMatcher() {

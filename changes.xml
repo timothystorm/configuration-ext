@@ -44,6 +44,10 @@
         	    class into META-INF so upgraded schemas can be configured without
         	    modifying code.
         	</action>
+        	<action dev="timothystorm" type="fix">
+        		Using results from code coverage and static analysis tools, cracks
+        		will filled and bugs were squashed.
+        	</action>
         </release>
     </body>
 </document>

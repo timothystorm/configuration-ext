@@ -9,8 +9,36 @@
 		</conf:hosts>
 	</conf:context>
 
-	<conf:property key="key1">
-		<conf:value env="test">value1</conf:value>
-		<conf:value env="0">badvalue</conf:value>
+	<conf:property key="basic">
+		<conf:value env="test">basicValue</conf:value>
+		<conf:value env="0">bad</conf:value>
+	</conf:property>
+	
+	<conf:property key="index">
+		<conf:value env="test">indexValue</conf:value>
+	</conf:property>
+	
+	<conf:property key="nest_outer">
+		<conf:value env="test">outerValue[${nest_inner}]</conf:value>
+	</conf:property>
+	
+	<conf:property key="nest_inner">
+		<conf:value env="test">innerValue</conf:value>
+	</conf:property>
+	
+	<conf:property key="list">
+		<conf:value env="test">listValue</conf:value>
+	</conf:property>
+	
+	<conf:property key="set">
+		<conf:value env="test">setValue</conf:value>
+	</conf:property>
+	
+	<conf:property key="mapKey">
+		<conf:value env="test">mapKey</conf:value>
+	</conf:property>
+	
+	<conf:property key="mapValue">
+		<conf:value env="test">mapValue</conf:value>
 	</conf:property>
 </conf:configuration>

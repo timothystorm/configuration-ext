@@ -121,8 +121,10 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
     /**
      * Parse the given List, exchanging its values if necessary
      * 
-     * @param config configuration resolve placeholders against
-     * @param list to parse
+     * @param config
+     *            configuration resolve placeholders against
+     * @param list
+     *            to parse
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void parseList(Configuration config, List list) {
@@ -136,8 +138,10 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
     /**
      * Parse the given Map, exchanging its values if necessary
      * 
-     * @param config configuration resolve placeholders against
-     * @param map to parse
+     * @param config
+     *            configuration resolve placeholders against
+     * @param map
+     *            to parse
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void parseMap(Configuration config, Map map) {
@@ -155,8 +159,10 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
     /**
      * Parse the given Set, exchanging its values if necessary
      * 
-     * @param config configuration resolve placeholders against
-     * @param set to parse
+     * @param config
+     *            configuration resolve placeholders against
+     * @param set
+     *            to parse
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void parseSet(Configuration config, Set set) {
@@ -173,9 +179,12 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
     /**
      * Parse values recursively to be able to resolve cross-references between placeholder values.
      * 
-     * @param config configuration resolve placeholders against
-     * @param value placeholder
-     * @param originalPlaceholder recursive placeholder value
+     * @param config
+     *            configuration resolve placeholders against
+     * @param value
+     *            placeholder
+     * @param originalPlaceholder
+     *            recursive placeholder value
      * @return parsed string
      */
     protected String parseString(Configuration config, String value, String originalPlaceholder) throws BeansException {
@@ -244,8 +253,10 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
      * Subclasses can override this for customized placeholder-to-key mappings or custom resolution strategies, possibly
      * just using the given configurations as fallback.
      * 
-     * @param placeholder that maps to a configuration value
-     * @param config to resolve placeholders against
+     * @param placeholder
+     *            that maps to a configuration value
+     * @param config
+     *            to resolve placeholders against
      * @return configuration mapped to the placeholder
      */
     protected String resolvePlaceholder(String placeholder, Configuration config) {
@@ -256,7 +267,8 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
      * Set whether to ignore unresolvable placeholders. Default is false: An exception will be thrown if a placeholder
      * cannot not be resolved
      * 
-     * @param ignoreUnresolvablePlaceholders true = ignore unresolved placeholders
+     * @param ignoreUnresolvablePlaceholders
+     *            true = ignore unresolved placeholders
      */
     public void setIgnoreUnresolvablePlaceholder(boolean ignoreUnresolvablePlaceholders) {
         _ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
@@ -265,8 +277,8 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
     /**
      * Set the prefix that a placeholder string starts with. The default is "%{"
      * 
-     * @param placeholderPrefix prefix of the placeholder
-     * 
+     * @param placeholderPrefix
+     *            prefix of the placeholder
      * @see DEFAULT_PLACEHODER_PREFIX
      */
     public void setPlaceholderPrefix(String placeholderPrefix) {
@@ -276,8 +288,8 @@ public class ConfigurationPlaceholderConfigurer extends ConfigurationResourceCon
     /**
      * Set the suffix that a placeholder string ends with. The default is "}"
      * 
-     * @param placeholderSuffix suffix of the placeholder
-     * 
+     * @param placeholderSuffix
+     *            suffix of the placeholder
      * @see DEFAULT_PLACEHODER_SUFFIX
      */
     public void setPlaceholderSuffix(String placeholderSuffix) {

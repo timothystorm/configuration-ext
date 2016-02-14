@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -92,8 +94,12 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     public RuntimeConfigurationHandler() {
         // match specifically to generally
-        _hostMatcher = new CompoundHostMatcher(MachineHostMatcher.singleton(), MachinePatternHostMatcher.singleton(),
-                LocalHostMatcher.singleton());
+        this(Arrays.asList(new HostMatcher[] { MachineHostMatcher.instance(), MachinePatternHostMatcher.instance(),
+                LocalHostMatcher.instance() }));
+    }
+
+    public RuntimeConfigurationHandler(Collection<HostMatcher> hostMatchers) {
+        _hostMatcher = new CompoundHostMatcher(hostMatchers);
     }
 
     private void assignHost(String host) throws SAXException {

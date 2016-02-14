@@ -6,5 +6,5 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ LocalHostMatcherTest.class, MachineHostMatcherTest.class, MachinePatternHostMatcherTest.class,
-        MachineUtils.class })
+        MachineUtilsTest.class })
 public class _Suite {}

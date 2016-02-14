@@ -21,6 +21,23 @@
 	</bean>
 	
 	<bean class="commons.configuration.ext.spring.ConfigurationPlaceholderConfigurerTest$ConfiguredClass">
-		<property name="configValue" value="#{key1}" />
+		<constructor-arg index="0" value="#{index}"/>		
+		<property name="basicValue" value="#{basic}" />
+		<property name="nestedValue" value="#{nest_outer}" />
+		<property name="listValue">
+			<list>
+				<value>#{list}</value>
+			</list>
+		</property>
+		<property name="setValue">
+			<set>
+				<value>#{set}</value>
+			</set>
+		</property>
+		<property name="mapValue">
+			<map>
+				<entry key="#{mapKey}" value="#{mapValue}" />
+			</map>
+		</property>
 	</bean>
 </beans>

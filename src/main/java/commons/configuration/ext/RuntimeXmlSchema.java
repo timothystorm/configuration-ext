@@ -29,7 +29,8 @@ class RuntimeXmlSchema {
                         // verify schema definition
                         int size = props.size();
                         if (size <= 0 || size > 1) throw new ConfigurationException(
-                                "ambiguous! Are there more than one namespace/schema defition");
+                                "ambiguous! Are there more than one namespace/schema defition at '" + SCHEMA_DEFINITION
+                                        + "'");
 
                         String namespace = (String) props.keys().nextElement();
                         _instance = new RuntimeXmlSchema(namespace, props.getProperty(namespace));

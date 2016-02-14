@@ -11,7 +11,7 @@ public class MachineHostMatcher implements HostMatcher {
 
     private MachineHostMatcher() {}
 
-    public static HostMatcher singleton() {
+    public static HostMatcher instance() {
         if (SINGLETON == null) {
             synchronized (MachineHostMatcher.class) {
                 if (SINGLETON == null) SINGLETON = new MachineHostMatcher() {

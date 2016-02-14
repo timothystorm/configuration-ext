@@ -1,7 +1,6 @@
 package commons.configuration.ext.spring;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.configuration.CompositeConfiguration;
@@ -16,18 +15,16 @@ import org.springframework.beans.factory.FactoryBean;
  * <pre>
  * &lt;bean id="AppConfig" class="commons.configuration.ext.spring.ConfigurationFactory"&gt;
  *   &lt;property name="configurations"&gt;
- *    &lt;list&gt;
- *      &lt;value&gt;&lt;bean class="MyConfiguration" /&gt;&lt;/value&gt;
- *      &lt;value&gt;
- *        &lt;bean class="commons.configuration.ext.RuntimeConfiguration"&gt;
- *            &lt;constructor-arg value="path/to/config/file" /&gt;
- *        &lt;/bean&gt;
- *      &lt;/value&gt;
- *    &lt;/list&gt;
+ *     &lt;list&gt;
+ *       &lt;bean class="org.apache.commons.configuration.SystemConfiguration" /&gt;
+ *       &lt;bean class="commons.configuration.ext.RuntimeConfiguration"&gt;
+ *         &lt;constructor-arg value="path/to/config/file" /&gt;
+ *       &lt;/bean&gt;
+ *     &lt;/list&gt;
  *   &lt;/property&gt;
  * &lt;/bean&gt;
  * 
- * &lt;bean id="MyClassThatNeedsConfigs" class="a.b.c.MyClass"&gt;
+ * &lt;bean class="a.b.c.MyClass"&gt;
  *   &lt;property name="configuration" ref="AppConfig" /&gt;
  * &lt;/bean&gt;
  * </pre>
@@ -50,30 +47,8 @@ public class ConfigurationFactory implements FactoryBean<Configuration> {
      * @param configs
      *            to be added to the build {@link Configuration}
      */
-    public ConfigurationFactory(Configuration... configs) {
-        setConfigurations(configs);
-    }
-
-    /**
-     * Create a {@link Configuration} factory of the provided {@link Configuration}s
-     * 
-     * @param configs
-     *            to be added to the build {@link Configuration}
-     */
     public ConfigurationFactory(Collection<Configuration> configs) {
         setConfigurations(configs);
-    }
-
-    /**
-     * Sets the {@link Configuration}s to be used to built {@link Configuration}
-     * 
-     * @param configs
-     *            to be added to the built {@link Configuration}
-     * @see #getObject()
-     */
-    public void setConfigurations(Configuration... configs) {
-        if (configs == null) throw new NullPointerException("configs required!");
-        setConfigurations(Arrays.asList(configs));
     }
 
     /**

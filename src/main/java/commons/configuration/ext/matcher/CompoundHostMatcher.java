@@ -1,7 +1,6 @@
 package commons.configuration.ext.matcher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,17 +19,8 @@ public class CompoundHostMatcher implements HostMatcher {
         addAll(matchers);
     }
 
-    public CompoundHostMatcher(HostMatcher... matchers) {
-        addAll(Arrays.asList(matchers));
-    }
-
     public CompoundHostMatcher addAll(Collection<HostMatcher> matchers) {
         if (matchers != null) getHostMatchersInternal().addAll(matchers);
-        return this;
-    }
-
-    public CompoundHostMatcher addHostMatcher(HostMatcher matcher) {
-        if (matcher != null) getHostMatchersInternal().add(matcher);
         return this;
     }
 

@@ -25,7 +25,7 @@ class ClassPathUtils {
         }
 
         if (loader == null) {
-            loader = Version.class.getClassLoader();
+            loader = ClassPathUtils.class.getClassLoader();
             if (loader == null) {
                 try {
                     loader = ClassLoader.getSystemClassLoader();
