@@ -7,7 +7,7 @@ Darren Bruxvoort, for sparking this idea.
 
 ## Usage
 
-RuntimeConfiguration.java
+### RuntimeConfiguration
 
 In many large scale environments there are several different levels of testing 
 as well as production.  At each of these levels there needs to be a unique set
