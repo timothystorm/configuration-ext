@@ -33,6 +33,8 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.NoOpLog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -41,6 +43,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import commons.configuration.ext.matcher.CompoundHostMatcher;
+import commons.configuration.ext.matcher.FileExistsHostMapper;
 import commons.configuration.ext.matcher.HostMatcher;
 import commons.configuration.ext.matcher.LocalHostMatcher;
 import commons.configuration.ext.matcher.MachineHostMatcher;
@@ -84,15 +87,18 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
     private String _hostEnvironmentState, _propertyKeyState, _propertyEnvironmentState;
 
     /** matches the runtime environment with the configured host(s) */
-    private final HostMatcher _hostMatcher;
+    private HostMatcher _hostMatcher;
 
     /** <env,[hosts,...]> */
     private Map<String, List<String>> _hosts = new HashMap<>();
 
+    /** Stores the logger. */
+    private Log _log;
+
     /** <key, <env, value>> */
     private Map<String, Map<String, String>> _runtimeProperties = new HashMap<>();
 
-    /** FSM parse stack */
+    /** finite state machine parse stack */
     Stack<String> _state;
 
     /** holds the current state of the value */
@@ -100,8 +106,17 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     public RuntimeConfigurationHandler() {
         // match specifically to generally
-        _hostMatcher = new CompoundHostMatcher(MachineHostMatcher.singleton(), MachinePatternHostMatcher.singleton(),
-                LocalHostMatcher.singleton());
+        this(new CompoundHostMatcher(MachineHostMatcher.instance(), MachinePatternHostMatcher.instance(),
+                FileExistsHostMapper.instance(), LocalHostMatcher.instance()));
+    }
+
+    public RuntimeConfigurationHandler(HostMatcher hostMatcher) {
+        setHostMatcher(hostMatcher);
+        setLogger(null);
+    }
+
+    public void setHostMatcher(HostMatcher hostMatcher) {
+        _hostMatcher = hostMatcher;
     }
 
     private void assignHost(String host) throws SAXException {
@@ -170,14 +185,26 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
     private String getHostEnvironment() throws ConfigurationException {
         StringBuilder hostsTried = new StringBuilder();
 
-        for (Entry<String, List<String>> entry : _hosts.entrySet()) {
-            for (String host : entry.getValue()) {
-                if (_hostMatcher.matches(host)) return entry.getKey();
-                hostsTried.append(host).append(" ");
+        if (_hostMatcher != null) {
+            for (Entry<String, List<String>> entry : _hosts.entrySet()) {
+                for (String host : entry.getValue()) {
+                    if (host == null) continue;
+                    hostsTried.append(host).append(" ");
+
+                    if (_hostMatcher.matches(host)) {
+                        String env = entry.getKey();
+                        getLogger().info("Using environment '" + env + "' for host '" + host + "'");
+                        return env;
+                    }
+                }
             }
         }
 
         throw new ConfigurationException(String.format("No host[@env] found for [" + hostsTried + "]"));
+    }
+
+    protected Log getLogger() {
+        return _log;
     }
 
     /**
@@ -305,6 +332,10 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
         } catch (ParserConfigurationException | TransformerException e) {
             throw new ConfigurationException(e);
         }
+    }
+
+    protected void setLogger(Log log) {
+        _log = (log != null) ? log : new NoOpLog();
     }
 
     @Override

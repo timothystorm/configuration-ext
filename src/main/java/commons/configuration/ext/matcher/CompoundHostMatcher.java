@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
+
 /**
  * Combines several {@link HostMatcher}s into one. All matcher will be tried, in insertion order, or until a match is
  * found.
@@ -49,7 +51,7 @@ public class CompoundHostMatcher implements HostMatcher {
      * Iterates each {@link HostMatcher} trying to find a matching host. If none are found then false is sreturned.
      */
     @Override
-    public boolean matches(final String host) {
+    public boolean matches(final String host) throws ConfigurationException {
         for (HostMatcher matcher : getHostMatchersInternal()) {
             if (matcher.matches(host)) return true;
         }

@@ -8,7 +8,7 @@ import commons.configuration.ext.matcher.HostMatcher;
 import commons.configuration.ext.matcher.LocalHostMatcher;
 
 public class LocalHostMatcherTest {
-    HostMatcher _matcher = LocalHostMatcher.singleton();
+    HostMatcher _matcher = LocalHostMatcher.instance();
     
     @Test
     public void match() throws Exception {

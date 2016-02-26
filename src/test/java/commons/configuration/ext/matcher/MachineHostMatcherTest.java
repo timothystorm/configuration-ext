@@ -9,7 +9,7 @@ import commons.configuration.ext.matcher.MachineHostMatcher;
 import commons.configuration.ext.matcher.MachineUtils;
 
 public class MachineHostMatcherTest {
-    HostMatcher _matcher = MachineHostMatcher.singleton();
+    HostMatcher _matcher = MachineHostMatcher.instance();
     
     @Test
     public void match() throws Exception {

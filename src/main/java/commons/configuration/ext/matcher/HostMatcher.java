@@ -1,5 +1,7 @@
 package commons.configuration.ext.matcher;
 
+import org.apache.commons.configuration.ConfigurationException;
+
 /**
  * Matches a host from a configuration based on criteria specific to an implementation. An affirmative answer is used to
  * determine the property level for the runtime system. For example, {@link LocalHostMatcher} can match hosts with a
@@ -16,5 +18,5 @@ public interface HostMatcher {
      *            to match against can be null
      * @return true if the host matches the criteria, false otherwise.
      */
-    boolean matches(String host);
+    boolean matches(String host) throws ConfigurationException;
 }
