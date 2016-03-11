@@ -1,19 +1,23 @@
-package commons.configuration.ext.matcher;
+package commons.configuration.ext.resolver;
+
+import commons.configuration.ext.EnvironmentResolver;
 
 /**
  * Matches hosts by comparing a host pattern with the runtime environments host name.
  * 
  * @author Timothy Storm
  */
-public class MachinePatternHostMatcher implements HostMatcher {
-    private static volatile HostMatcher SINGLETON;
+public class MachinePatternHostResolver extends AbstractEnvironmentResolver {
+    private static volatile EnvironmentResolver SINGLETON;
 
-    private MachinePatternHostMatcher() {}
+    private MachinePatternHostResolver() {
+        super();
+    }
 
-    public static HostMatcher instance() {
+    public static EnvironmentResolver instance() {
         if (SINGLETON == null) {
-            synchronized (MachineHostMatcher.class) {
-                if (SINGLETON == null) SINGLETON = new MachinePatternHostMatcher() {
+            synchronized (MachineHostResolver.class) {
+                if (SINGLETON == null) SINGLETON = new MachinePatternHostResolver() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         throw new CloneNotSupportedException();
@@ -41,11 +45,12 @@ public class MachinePatternHostMatcher implements HostMatcher {
      * </ul>
      */
     @Override
-    public boolean matches(String host) {
+    public boolean resolves(final String env, final String host) {
         if (host == null || host.isEmpty()) return false;
         if (host.startsWith("/") && host.startsWith("/")) {
             String pattern = host.substring(1, host.length() - 1);
-            return MachineUtils.hostName().matches(pattern);
+            if (MachineUtils.hostName().matches(pattern)) return true;
+            if (MachineUtils.hostAddress().matches(pattern)) return true;
         }
         return false;
     }

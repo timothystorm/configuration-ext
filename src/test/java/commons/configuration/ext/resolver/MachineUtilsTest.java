@@ -1,10 +1,8 @@
-package commons.configuration.ext.matcher;
+package commons.configuration.ext.resolver;
 
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-
-import commons.configuration.ext.matcher.MachineUtils;
 
 public class MachineUtilsTest {
     /**

@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -42,12 +42,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import commons.configuration.ext.matcher.CompoundHostMatcher;
-import commons.configuration.ext.matcher.FileExistsHostMapper;
-import commons.configuration.ext.matcher.HostMatcher;
-import commons.configuration.ext.matcher.LocalHostMatcher;
-import commons.configuration.ext.matcher.MachineHostMatcher;
-import commons.configuration.ext.matcher.MachinePatternHostMatcher;
+import commons.configuration.ext.resolver.CompoundEnvironmentResolver;
+import commons.configuration.ext.resolver.FileEnvironmentResolver;
+import commons.configuration.ext.resolver.MachineHostResolver;
+import commons.configuration.ext.resolver.MachinePatternHostResolver;
 
 /**
  * Loads and writes runtime configurations.
@@ -86,11 +84,11 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     private String _hostEnvironmentState, _propertyKeyState, _propertyEnvironmentState;
 
-    /** matches the runtime environment with the configured host(s) */
-    private HostMatcher _hostMatcher;
+    /** resolves the runtime environment for the configured host(s) */
+    private EnvironmentResolver _resolver;
 
     /** <env,[hosts,...]> */
-    private Map<String, List<String>> _hosts = new HashMap<>();
+    private Map<String, Collection<String>> _hosts = new HashMap<>();
 
     /** Stores the logger. */
     private Log _log;
@@ -106,17 +104,17 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     public RuntimeConfigurationHandler() {
         // match specifically to generally
-        this(new CompoundHostMatcher(MachineHostMatcher.instance(), MachinePatternHostMatcher.instance(),
-                FileExistsHostMapper.instance(), LocalHostMatcher.instance()));
+        this(new CompoundEnvironmentResolver(MachineHostResolver.instance(), MachinePatternHostResolver.instance(),
+                FileEnvironmentResolver.instance()));
     }
 
-    public RuntimeConfigurationHandler(HostMatcher hostMatcher) {
-        setHostMatcher(hostMatcher);
+    public RuntimeConfigurationHandler(EnvironmentResolver resolver) {
+        setEnvironmentResolver(resolver);
         setLogger(null);
     }
 
-    public void setHostMatcher(HostMatcher hostMatcher) {
-        _hostMatcher = hostMatcher;
+    public void setEnvironmentResolver(EnvironmentResolver resolver) {
+        _resolver = resolver;
     }
 
     private void assignHost(String host) throws SAXException {
@@ -183,24 +181,19 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
      *             if the host env cannot be determined.
      */
     private String getHostEnvironment() throws ConfigurationException {
-        StringBuilder hostsTried = new StringBuilder();
+        StringBuilder attempted = new StringBuilder();
 
-        if (_hostMatcher != null) {
-            for (Entry<String, List<String>> entry : _hosts.entrySet()) {
-                for (String host : entry.getValue()) {
-                    if (host == null) continue;
-                    hostsTried.append(host).append(" ");
+        if (_resolver != null) {
+            for (Entry<String, Collection<String>> entry : _hosts.entrySet()) {
+                String environment = entry.getKey();
+                Collection<String> hosts = entry.getValue();
 
-                    if (_hostMatcher.matches(host)) {
-                        String env = entry.getKey();
-                        getLogger().info("Using environment '" + env + "' for host '" + host + "'");
-                        return env;
-                    }
-                }
+                attempted.append("[").append(environment).append(":").append(hosts).append("] ");
+                if (_resolver.resolves(environment, hosts)) return _resolver.resolvesTo();
             }
         }
 
-        throw new ConfigurationException(String.format("No host[@env] found for [" + hostsTried + "]"));
+        throw new ConfigurationException(String.format("No host[@env] found for [" + attempted + "]"));
     }
 
     protected Log getLogger() {

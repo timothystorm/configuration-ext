@@ -1,4 +1,4 @@
-package commons.configuration.ext.matcher;
+package commons.configuration.ext.resolver;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
