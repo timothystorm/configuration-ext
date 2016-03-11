@@ -12,15 +12,45 @@ import org.apache.commons.lang.StringUtils;
 import commons.configuration.ext.EnvironmentResolver;
 
 /**
- * Matches the host based on the presence of a file on the file system.
+ * Resolves the environment based on the contents of a filesystem file. 
  * 
+ * <p>
+ * Example (all defaults): Using a file located at /opt/app/current/cfg/l3.properties with the contents...
  * <pre>
+ * #-----properties---------
+ * environment=L3
+ * 
+ * #-----configurations.xml--------
  * &lt;context&gt;
- *   &lt;hosts env="TEST"&gt;
- *     &lt;host&gt;file:/path/to/file/test.env&lt;/host&gt;
+ *   &lt;hosts env="L2"&gt;
+ *     &lt;host&gt;file:/path/to/file/l2.properties&lt;/host&gt;
  *   &lt;/hosts&gt;
- *   &lt;hosts env="PROD"&gt;
- *     &lt;host&gt;file:/path/to/file/prod.env&lt;/host&gt;
+ *   &lt;hosts env="L3"&gt;
+ *     &lt;host&gt;file:/path/to/file/l3.properties&lt;/host&gt;
+ *   &lt;/hosts&gt;
+ * &lt;/context&gt;
+ * </pre>
+ * 
+ * 
+ * <p>
+ * Example (customized): Using a file located at /opt/app/current/cfg/levels.properties with the contents...
+ * <pre>
+ * #-----properties---------
+ * unit=L1
+ * int=L1
+ * sys=L1
+ * vol=L1
+ * exp=L1
+ * test=L1
+ * prod=L1
+ * 
+ * #-----configurations.xml--------
+ * &lt;context&gt;
+ *   &lt;hosts env="L2"&gt;
+ *     &lt;host&gt;file:/path/to/file/l2.properties&lt;/host&gt;
+ *   &lt;/hosts&gt;
+ *   &lt;hosts env="L3"&gt;
+ *     &lt;host&gt;file:/path/to/file/l3.properties&lt;/host&gt;
  *   &lt;/hosts&gt;
  * &lt;/context&gt;
  * </pre>

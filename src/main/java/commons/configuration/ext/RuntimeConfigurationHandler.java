@@ -46,6 +46,7 @@ import commons.configuration.ext.resolver.CompoundEnvironmentResolver;
 import commons.configuration.ext.resolver.FileEnvironmentResolver;
 import commons.configuration.ext.resolver.MachineHostResolver;
 import commons.configuration.ext.resolver.MachinePatternHostResolver;
+import commons.configuration.ext.resolver.MachineUtils;
 
 /**
  * Loads and writes runtime configurations.
@@ -286,7 +287,7 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
             // host
             Element host = doc.createElement(Elem.HOST);
-            host.setTextContent("localhost");
+            host.setTextContent(MachineUtils.hostName());
             hosts.appendChild(host);
 
             // property/values

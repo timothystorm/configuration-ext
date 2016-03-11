@@ -17,6 +17,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import commons.configuration.ext.resolver.MachineUtils;
+
 public class RuntimeConfigurationHandlerTest {
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
@@ -76,7 +78,7 @@ public class RuntimeConfigurationHandlerTest {
             {
                 xml.append("<hosts env=\"0\">");
                 {
-                    xml.append("<host>localhost</host>");
+                    xml.append("<host>" + MachineUtils.hostName() + "</host>");
                 }
                 xml.append("</hosts>");
             }

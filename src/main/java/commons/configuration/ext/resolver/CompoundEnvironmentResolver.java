@@ -8,6 +8,12 @@ import java.util.List;
 
 import commons.configuration.ext.EnvironmentResolver;
 
+/**
+ * Combines several {@link EnvironmentResolver}s into one. Resolutions will be tried in insertion order until a match is
+ * found or until there are no more resolvers to try.
+ * 
+ * @author Timothy Storm
+ */
 public class CompoundEnvironmentResolver implements EnvironmentResolver {
     private List<EnvironmentResolver> _resolvers;
     private String                    _to;
@@ -52,6 +58,8 @@ public class CompoundEnvironmentResolver implements EnvironmentResolver {
         _to = null;
 
         for (EnvironmentResolver r : getResolversInternal()) {
+            if(r == null) continue;
+            
             if (r.resolves(environment, hosts)) {
                 _to = r.resolvesTo();
                 return true;

@@ -84,7 +84,7 @@ public class RuntimeConfigurationTest {
         configOut.save(tmpFile);
 
         // for debugging purposes
-        // Files.readAllLines(tmpFile.toPath()).forEach(line -> System.out.println(line));
+//        Files.readAllLines(tmpFile.toPath()).forEach(line -> System.out.println(line));
 
         // read in configuration
         RuntimeConfiguration configIn = new RuntimeConfiguration(tmpFile);

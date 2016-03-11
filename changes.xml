@@ -4,9 +4,14 @@
         <author email="timothystorm@gmail.com">Timothy Storm</author>
     </properties>
     <body>
-        <release version="0.0.0" date="2015-12-22" description="Initial release">
+        <release version="1.1.0" date="2016-03-11">
+            <action dev="timothystorm" type="update">
+                Refactored the matching of hosts into a new implementation of
+                resolvers that can match host(s) and environments.
+            </action>
             <action dev="timothystorm" type="add">
-                Created initial release
+                Added a new resolver that can determine the runtime environment
+                by reading a setup file
             </action>
         </release>
         <release version="1.0.0" date="2016-01-17">
@@ -29,7 +34,13 @@
                 Added ability to handle global (*) environment properties
             </action>
             <action dev="timothystorm" type="add">
-                Added ConfigurationFactory to allow for Spring dependency injection
+                Added ConfigurationFactory to allow for Spring dependency
+                injection
+            </action>
+        </release>
+        <release version="0.0.0" date="2015-12-22" description="Initial release">
+            <action dev="timothystorm" type="add">
+                Created initial release
             </action>
         </release>
     </body>
