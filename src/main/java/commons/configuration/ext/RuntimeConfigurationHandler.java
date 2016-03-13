@@ -105,8 +105,8 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     public RuntimeConfigurationHandler() {
         // match specifically to generally
-        this(new CompoundEnvironmentResolver(MachineHostResolver.instance(), MachinePatternHostResolver.instance(),
-                FileEnvironmentResolver.instance()));
+        this(new CompoundEnvironmentResolver(MachineHostResolver.instance(), FileEnvironmentResolver.instance(),
+                MachinePatternHostResolver.instance()));
     }
 
     public RuntimeConfigurationHandler(EnvironmentResolver resolver) {
@@ -177,24 +177,37 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
     }
 
     /**
-     * @return the host env by mapping the config hosts to the host matcher strategy
-     * @throws SAXException
-     *             if the host env cannot be determined.
+     * @return the target environment that successfully resolves
+     * @throws ConfigurationException
+     *             if the environment cannot be resolved
      */
-    private String getHostEnvironment() throws ConfigurationException {
+    private String resolveEnvironment() throws ConfigurationException {
         StringBuilder attempted = new StringBuilder();
+        String resolution = null;
 
         if (_resolver != null) {
-            for (Entry<String, Collection<String>> entry : _hosts.entrySet()) {
+            Iterator<Entry<String, Collection<String>>> entryIt = _hosts.entrySet().iterator();
+            while (entryIt.hasNext()) {
+                Entry<String, Collection<String>> entry = entryIt.next();
                 String environment = entry.getKey();
                 Collection<String> hosts = entry.getValue();
 
-                attempted.append("[").append(environment).append(":").append(hosts).append("] ");
-                if (_resolver.resolves(environment, hosts)) return _resolver.resolvesTo();
+                // record the attempts for failure reporting
+                attempted.append("{env:'").append(environment).append("', ").append("hosts:").append(hosts);
+                if (entryIt.hasNext()) attempted.append("}, ");
+                else attempted.append("}");
+
+                // resolve the environment
+                if (_resolver.resolves(environment, hosts)) {
+                    if (resolution != null) {
+                        throw new ConfigurationException("ambiguous host[@env] resolution '" + attempted + "'");
+                    } else resolution = _resolver.resolvesTo();
+                }
             }
         }
 
-        throw new ConfigurationException(String.format("No host[@env] found for [" + attempted + "]"));
+        if (resolution != null) return resolution;
+        else throw new ConfigurationException(String.format("no host[@env] resolution '" + attempted + "'"));
     }
 
     protected Log getLogger() {
@@ -207,9 +220,9 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
      * @return runtime {@link Properties}s
      * @throws SAXException
      */
-    private Properties getRuntimeProperties() throws ConfigurationException {
+    private Properties resolveProperties() throws ConfigurationException {
         final Properties runtimeProperties = new Properties();
-        final String env = getHostEnvironment();
+        final String env = resolveEnvironment();
 
         for (Entry<String, Map<String, String>> properties : _runtimeProperties.entrySet()) {
             String key = properties.getKey();
@@ -224,7 +237,7 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
 
     /**
      * {@inheritDoc}
-     * Loads a runtime xml configuration source into the target {@link Configuration}
+     * Loads a runtime xml configuration into the target {@link Configuration}
      */
     @Override
     public synchronized void load(Reader source, Configuration config) throws ConfigurationException {
@@ -245,8 +258,8 @@ public class RuntimeConfigurationHandler extends DefaultHandler implements Confi
             SAXParser parser = factory.newSAXParser();
             parser.parse(new InputSource(source), this);
 
-            // push the parsed properties into the configuration
-            for (Entry<Object, Object> entry : getRuntimeProperties().entrySet()) {
+            // push the resolved properties into the configuration
+            for (Entry<Object, Object> entry : resolveProperties().entrySet()) {
                 config.addProperty((String) entry.getKey(), StringUtils.trim((String) entry.getValue()));
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {

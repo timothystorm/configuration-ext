@@ -1,7 +1,6 @@
 package commons.configuration.ext.spring;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.configuration.CompositeConfiguration;
@@ -50,30 +49,8 @@ public class ConfigurationFactory implements FactoryBean<Configuration> {
      * @param configs
      *            to be added to the build {@link Configuration}
      */
-    public ConfigurationFactory(Configuration... configs) {
-        setConfigurations(configs);
-    }
-
-    /**
-     * Create a {@link Configuration} factory of the provided {@link Configuration}s
-     * 
-     * @param configs
-     *            to be added to the build {@link Configuration}
-     */
     public ConfigurationFactory(Collection<Configuration> configs) {
         setConfigurations(configs);
-    }
-
-    /**
-     * Sets the {@link Configuration}s to be used to built {@link Configuration}
-     * 
-     * @param configs
-     *            to be added to the built {@link Configuration}
-     * @see #getObject()
-     */
-    public void setConfigurations(Configuration... configs) {
-        if (configs == null) throw new NullPointerException("configs required!");
-        setConfigurations(Arrays.asList(configs));
     }
 
     /**

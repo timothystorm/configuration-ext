@@ -12,10 +12,10 @@ import org.apache.commons.lang.StringUtils;
 import commons.configuration.ext.EnvironmentResolver;
 
 /**
- * Resolves the environment based on the contents of a filesystem file. 
- * 
+ * Resolves the environment based on the contents of a filesystem file.
  * <p>
  * Example (all defaults): Using a file located at /opt/app/current/cfg/l3.properties with the contents...
+ * 
  * <pre>
  * #-----properties---------
  * environment=L3
@@ -30,10 +30,9 @@ import commons.configuration.ext.EnvironmentResolver;
  *   &lt;/hosts&gt;
  * &lt;/context&gt;
  * </pre>
- * 
- * 
  * <p>
  * Example (customized): Using a file located at /opt/app/current/cfg/levels.properties with the contents...
+ * 
  * <pre>
  * #-----properties---------
  * unit=L1
@@ -83,6 +82,7 @@ public class FileEnvironmentResolver extends AbstractEnvironmentResolver {
     public boolean resolves(final String env, final String host) {
         if (env == null || env.isEmpty()) return false;
         if (host == null || host.isEmpty()) return false;
+
         if (host.startsWith(FILE_RESOURCE_PREFIX)) {
             // extract the resource from the host configuration
             String resource = host.substring(FILE_RESOURCE_PREFIX.length());
@@ -93,17 +93,14 @@ public class FileEnvironmentResolver extends AbstractEnvironmentResolver {
             String key = StringUtils.substringAfter(resource, ENV_ATTR_SUFFIX);
             key = StringUtils.defaultIfBlank(key, DEFAULT_ENVIRONMENT_KEY);
 
-            // check resource availability
-            Path resourcePath = Paths.get(path);
-            if (!Files.exists(resourcePath)) return false;
-            if (!Files.isReadable(resourcePath)) return false;
-
             try {
                 // extract properties and locate the environment value
+                Path resourcePath = Paths.get(path);
                 Properties props = new Properties();
                 props.load(Files.newBufferedReader(resourcePath, Charset.forName("UTF-8")));
                 String propertyEnv = props.getProperty(key);
-                return (env.equalsIgnoreCase(propertyEnv));
+
+                return env.equalsIgnoreCase(propertyEnv);
             } catch (IOException ioe) {
                 getLogger().error(ioe);
             }
