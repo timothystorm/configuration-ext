@@ -29,9 +29,7 @@ class ClassPathUtils {
             if (loader == null) {
                 try {
                     loader = ClassLoader.getSystemClassLoader();
-                } catch (Throwable ex) {
-                    // maybe the caller can live with null
-                }
+                } catch (Throwable giveUpAndReturnNull) {}
             }
         }
         return loader;
