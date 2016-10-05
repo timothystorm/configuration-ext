@@ -49,5 +49,10 @@
         		will filled and bugs were squashed.
         	</action>
         </release>
+        <release version="1.1.1" date="2016-10-05">
+        	<action dev="timothystorm" type="update">
+        		Fixed Spring example in README.
+        	</action>
+        </release>
     </body>
 </document>
