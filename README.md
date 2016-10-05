@@ -50,7 +50,7 @@ String url = config.getString("database_url");
 ```
 
 ## Spring Utilities
-Utilities are provided Spring dependency injection in conjunction with commons
+Utilities are provided for Spring dependency injection in conjunction with commons
 configuration.
 
 ### ConfigurationFactory
@@ -97,8 +97,8 @@ definitions.  The default placeholder syntax follows the JSF style: #{...}
 
 <!-- Use configuration placeholder(s) -->
 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-  <property name="driverClassName"><value>#{driver}</value></property>
-  <property name="url"><value>jdbc:#{dbname}</value></property>
+  <property name="driverClassName" value="#{driver}"/>
+  <property name="url" value="jdbc:#{dbname}" />
 </bean>
 ```
 
