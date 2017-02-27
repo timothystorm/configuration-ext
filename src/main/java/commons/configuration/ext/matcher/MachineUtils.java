@@ -10,7 +10,7 @@ import java.util.Enumeration;
  * 
  * @author Timothy Storm
  */
-class MachineUtils {
+public class MachineUtils {
     /**
      * Cache localhost because it <b>should not</b> change while the JVM is
      * running.
