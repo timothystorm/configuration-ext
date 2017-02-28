@@ -1,5 +1,7 @@
 package commons.configuration.ext.matcher;
 
+import commons.configuration.ext.util.MachineUtils;
+
 /**
  * Matches hosts if they are assigned the computer name or IP of the runtime environment. Example: 192.168.56.1,
  * Xenon-company.com

@@ -1,10 +1,10 @@
-package commons.configuration.ext.matcher;
+package commons.configuration.ext.util;
 
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import commons.configuration.ext.matcher.MachineUtils;
+import commons.configuration.ext.util.MachineUtils;
 
 public class MachineUtilsTest {
     /**
@@ -14,6 +14,6 @@ public class MachineUtilsTest {
     public void presence() throws Exception {
         assertNotNull(MachineUtils.hostAddress());
         assertNotNull(MachineUtils.hostName());
-        assertNotNull(MachineUtils.localHost());
+        assertNotNull(MachineUtils.fqdn());
     }
 }

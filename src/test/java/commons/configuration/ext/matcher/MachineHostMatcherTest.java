@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import commons.configuration.ext.matcher.HostMatcher;
 import commons.configuration.ext.matcher.MachineHostMatcher;
-import commons.configuration.ext.matcher.MachineUtils;
+import commons.configuration.ext.util.MachineUtils;
 
 public class MachineHostMatcherTest {
     HostMatcher _matcher = MachineHostMatcher.instance();

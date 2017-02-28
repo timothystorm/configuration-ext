@@ -1,5 +1,7 @@
 package commons.configuration.ext.matcher;
 
+import commons.configuration.ext.util.MachineUtils;
+
 /**
  * Matches hosts by comparing a host pattern with the runtime environments host name.
  * 
